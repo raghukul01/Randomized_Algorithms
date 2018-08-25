@@ -1,0 +1,37 @@
+
+%=======================   Default Templete   ==================
+\documentclass[a4paper]{article}
+
+
+% file with some default definations
+\input{/home/raghukul/Competetive/latex/assignment_2/structure.tex}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{\NAME\ (\ANDREWID)}}
+\chead{\textbf{\COURSE, Assignment \HWNUM}}
+\rhead{\today}
+
+%==================Header details======================
+\newcommand\NAME{Raghukul Raman}
+\newcommand\ANDREWID{160538}
+\newcommand\HWNUM{1}
+\newcommand\COURSE{CS648}
+%======================================================
+
+% available formatted sections:
+% - COMMAND LINE ENVIRONMENT: \begin{commandline} \end{commandline}
+% - FILE CONTENTS ENVIRONMENT: \begin{file}[optional filename, defaults to "File"]
+% - NUMBERED QUESTIONS ENVIRONMENT: \begin{question}[optional title]
+% - WARNING TEXT ENVIRONMENT(can also be used for note): \begin{warn}[optional title, defaults to "Warning:"]
+% - INFORMATION ENVIRONMENT(can be used to mention given details): \begin{info}[optional title, defaults to "Info:"]
+
+%===============================================================
+\begin{document}
+
+\maketitle % Print the title
+Write main text here...
+
+	
+\end{document}
