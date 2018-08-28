@@ -1,0 +1,421 @@
+
+%=======================   Default Templete   ==================
+\documentclass[a4paper]{article}
+
+
+% file with some default definations
+\input{structure.tex}
+\usepackage{listings}
+\lstset{language=Python, basicstyle=\normalsize\sffamily\linespread{0.8}, numbers=left, numberstyle=\small, stepnumber=1, numbersep=5pt}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{\NAME\ (\ANDREWID)}}
+\chead{\textbf{Assignment \HWNUM}}
+\rhead{\COURSE}
+
+\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
+
+%==================Header details======================
+\newcommand\NAME{Raghukul, Vibhor}
+\newcommand\ANDREWID{160538, 160778}
+\newcommand\HWNUM{1}
+\newcommand\COURSE{CS648}
+%======================================================
+
+% available formatted sections:
+% - COMMAND LINE ENVIRONMENT: \begin{commandline} \end{commandline}
+% - FILE CONTENTS ENVIRONMENT: \begin{file}[optional filename, defaults to "File"]
+% - NUMBERED QUESTIONS ENVIRONMENT: \begin{question}[optional title]
+% - WARNING TEXT ENVIRONMENT(can also be used for note): \begin{warn}[optional title, defaults to "Warning:"]
+% - INFORMATION ENVIRONMENT(can be used to mention given details): \begin{info}[optional title, defaults to "Info:"]
+
+%===============================================================
+\begin{document}
+
+% start of Q1
+\begin{question}
+\textbf{Randomized quick select}: The expected number of comparisons is at most 3.5n.
+\end{question}
+\begin{file}[Rand-QSelect(k, S)]
+\begin{lstlisting}[columns=fullflexible]
+Select a pivot element x uniformly randomly from set S.
+Find its rank in the set S (by comparing x with every other element of set S).
+Let r be the rank of x.
+If r = k, we report x as the output. Otherwise proceed recursively as follows:
+    If r > k, then Rand-QSelect(k, S<x)
+    Else Rand-QSelect(k-r, S>x).
+\end{lstlisting}
+\end{file}
+
+This problem is quite similar to the analysis in randomized quick sort. let $e_i$ denote $i^{th}$
+smallest element, so $e_1 = $ smallest element of $S$, $e_n = $ largest element of $S$, and so on...
+Now let us examine, when are $e_i$ and $e_j$ coampared during execution of Rand-QSelect(k, S).
+
+\subsubsection*{Case 1: $i < j < k$}
+Pivots are choosen randomly, if $e_p$ is choosen, such that $p > k$, then size of set $S$ reduces, but still
+$e_i$ and $e_j$ remains in the set. If $p < i$, then also just size of set reduces, $e_i$ and $e_j$
+will both be present in $S_{>p}$. What if $p > i,\ p < k$ and $p \neq i,\ p \neq j$? In this case, set 
+$S$ reduces such a way that $e_i$ is removed, or $e_i$ and $e_j$ will not be compared. Also if 
+$p = i\ or\ p = j$ $e_i$, $e_j$ are definately compared. So using the result in case of Randomized quick sort we
+get $P(i,j \ are\ compared / (i < j < k)) = \dfrac{2}{k - i + 1}$.
+
+
+\subsubsection*{Case 2: $k < i < j$}
+This case is exactly similar to case 1, just that here the range of interest is $(k, j)$. So \\
+$P(i,j \ are\ compared / (k < i < j)) = \dfrac{2}{j - k + 1}$
+
+\subsubsection*{Case 3: $i < k < j$}
+In this case our range of interest is $(i, j)$, hence it should be $i$ or $j$, which get choosen first from this range.
+So $P(i,j \ are\ compared / (k < i < j)) = \dfrac{2}{j - i + 1}$
+
+\subsubsection*{Linearity of Expectation!}
+Let $X$ be the total number of comparisons and $X_{ij}$ be a random varaible, 
+denoting if $i$ and $j$ are compared duing execution of 
+Rand-QSelect(k, S). So 
+\begin{align*}
+X_{ij} & = \begin{cases}
+         1 \quad \text{if $i$ and $j$ are compared} \\
+         0 \quad \text{otherwise}   
+         \end{cases} \\
+E(X_{ij}) & = 1*P(X_{ij} = 1) + 0*P(X_{ij} = 0) \\
+          & = P(X_{ij} = 1)
+\end{align*}
+
+So by linearity of expectation we can say that:
+\begin{align*}
+X & = X_{12} + X_{13} +\ldots. X_{(n-1)n} \\
+E(X) & = E[X_{12}] + E[X_{13}] \ldots. E[X_{(n-1)n}] \\
+\text{or } E(X) & = P(X_{12} = 1) + P(X_{13} = 1) + \ldots. P(X_{(n-1)n} = 1)
+\end{align*}
+
+Using results from 3 cases discussed we get:
+\begin{align*}
+E(X) & = \sum_{i = 1}^{k-2} \sum_{j=i+1}^{k-1} \dfrac{2}{k - i + 1} + \sum_{i = k+1}^{n-1} \sum_{j=i+1}^{n} \dfrac{2}{j - k + 1} + \sum_{i = 1}^{k} \sum_{j=k+1}^{n} \dfrac{2}{j - i + 1} \\
+\text{let } E(X) & = A + B \text{ where } A = \sum_{i = 1}^{k-2} \sum_{j=i+1}^{k-1} \dfrac{2}{k - i + 1} + \sum_{i = k+1}^{n-1} \sum_{j=i+1}^{n} \dfrac{2}{j - k + 1},\ B =  \sum_{i = 1}^{k} \sum_{j=k+1}^{n} \dfrac{2}{j - i + 1}
+\end{align*}
+
+$A = a_1 + a_2$, where $a_1$ and $a_2$ are the 2 summations given above. Now lets simplify each of these summations:
+\begin{align*}
+a_1 & = \sum_{i = 1}^{k - 2} \dfrac{2}{k - i + 1} * (k - 1 - (i + 1) + 1) = \sum_{i=1}^{k - 2} \dfrac{2*(k - i - 1)}{k - i + 1} \\
+a_1 & = 2*\sum_{i=1}^{k - 2} (1 - \dfrac{2}{k-i+1}) < 2(k - 1)
+\end{align*}
+
+Some observations on $a_2$ are: (i) $j$ takes the value $n$, for all possible values of $i$, ie $(n - 1 - (k + 1)+1) = n-k-1$ values. (ii) $j$ takes value $n - 1$, for all $i \in (k+1,n-2)$, ie $n-k-2$ values, and so on... Hence, 
+we can write $a_2$ as:
+\begin{align*}
+a_2 & = \sum_{j=k+2}^{n} \dfrac{2}{j - k + 1} * (j - k - 1) \\
+a_2 & = 2*\sum_{j=k+2}^{n} (1 - \dfrac{2}{j - k + 1}) < 2(n - (k+2) +1) = 2n - 2k -2 < 2n - 2k
+\end{align*}
+
+We get $A = a_1 + a_2 < 2(k  - 1) + 2n - 2k < 2n$, now we need to show that $B < 1.5n$. 
+
+\subsubsection*{Lemma:}
+Maximum value of $B$ occurs when $k = n/2$.
+\begin{proof}
+Let $S_t$ denotes sum over all values of $j \in (k+1,n)$ given $i = t$.
+for $i = k$ and taking all values of j we get: 
+\begin{align*}
+S_k & = \dfrac{2}{2} + \dfrac{2}{3} + \ldots. \dfrac{2}{n-k+1} \\
+S_{k-1} & =  \dfrac{2}{3} + \dfrac{2}{4} + \ldots. \dfrac{2}{n - k + 2} \\
+.\ldots\\
+\ldots.\\
+S_1 & = \dfrac{2}{k+1} + \dfrac{2}{k+2} + \ldots. \dfrac{2}{n} \\
+B & = S_1 + S_2 + \ldots. + S_k
+\end{align*}
+So if $k = n/2$ we get:
+\begin{align*}
+B_{n/2} & = 2 * (\dfrac{1}{2} + \dfrac{2}{3} + \ldots.\dfrac{n/2}{n/2+1} + \dfrac{n/2-1}{n/2+2} + \ldots.\dfrac{1}{n})
+\end{align*}
+
+If $k < n/2$ we get:
+\begin{align*}
+B_{<n/2} & = 2* (\dfrac{1}{2} + \dfrac{2}{3} + \ldots \dfrac{k}{k+1} + \dfrac{k}{k+2} +\ldots. \dfrac{k-1}{n-k+1}+ \ldots.\dfrac{1}{n})
+\end{align*}
+
+If $k > n/2$:
+\begin{align*}
+B_{>n/2} = 2* (\dfrac{1}{2} + \dfrac{2}{3} + \ldots \dfrac{n - k}{n - k + 1} + \dfrac{n - k}{n - k + 2} + \ldots.\dfrac{1}{n})
+\end{align*}
+
+So the only difference when $k \ne n/2$ occurs on the middle terms. For $k < n/2$ this numerator is $k$, while for $k > n/2$ this is $n - k$, both of these are $\le n/2$. Hence maximum value of $B$ occurs when $k = n/2$.
+\end{proof}
+
+\pagebreak
+
+Now we just need to find value of $B$ at $k=n/2$ that would give us an upper bound on $B$. Expression for $B$ is:
+\begin{align*}
+B & =  2 * (\dfrac{1}{2} + \dfrac{2}{3} + \ldots.\dfrac{x}{x+1}\ldots\dfrac{n/2}{n/2+1} + \dfrac{n/2-1}{n/2+2} + \ldots\dfrac{n - x}{x} + \dfrac{0}{n}) \\
+B & = 2*(\sum_{i=1}^{n/2} \dfrac{x}{x+1} + \sum_{i=n/2}{n} \dfrac{n-x}{x}) \\
+B & \leq 2*(\dfrac{n}{2} + n*(\sum_{i=n/2}^{n} \dfrac{1}{x}) - \dfrac{n}{2}) \\
+B & \leq 2*(n*(\sum_{i=1}^{n} \dfrac{1}{x} - \sum_{i=1}^{n/2} \dfrac{1}{x})) \\
+B & \leq 2*n(\log n - \log (n/2)) \\
+B & \leq 2n(\log 2) \\
+B & \leq 1.387n
+\end{align*}
+Hence $A + B \leq 3.387n < 3.5n$.
+
+
+\pagebreak
+
+% start of Q2
+\begin{question}[]
+\textbf{(a) We have a function $F$ : $\{0,...,n-1\}\ \rightarrow\ \{0,...,m-1\}$. For $0 \leq x,y \leq n-1$, $$F((x+y)\ mod\ n) = (F(x)+F(y))\ mod\ m$$ The only way we have for evaluating F is to use a lookup table that stores the values of $F$. Unfortunately, an Evil Adversary has changed the value of $1/5$ of the table entries when we were not looking. Describe a simple randomized algorithm that given an input $z$, outputs a value that equals $F(z)$ with
+probability at least $1/2$. Your algorithm should work for every value of $z$, regardless of what values the Adversary changed. Your algorithm should use as few lookups and as little computation as possible.} \\
+\textbf{(b) Suppose I allow you to repeat your initial algorithm $k$ times. What should you do in this case, and what is the probability that your enhanced algorithm returns the correct answer?}
+\end{question}
+\subsubsection*{(a)}
+Suppose that entries of the table are given by $G(x)$, for $0 \leq x \leq n-1$ after the adversary changed the values.
+
+\textbf{Algorithm:}
+\begin{enumerate}
+    \item Select a number $x$ randomly between $0$ and $n-1$.
+    \item Define the mapping, 
+
+\begin{align*}
+    H(x) & = \begin{cases}
+        (z - x) \quad \text{ if } 0 \leq x \leq z \\
+    (n - 1 + z - x) \quad \text{ if } (z-1) \leq x \leq (n-1) 
+        \end{cases}
+\end{align*}
+    \item Set $y = H(x)$ 
+    \item Return $(G(x)+G(y))\ mod\ m$.
+\end{enumerate} 
+\begin{warn}[Lemma 1: Probability that Algorithm returns wrong answer is less than or equal to $2/5$.]
+\end{warn}
+
+\begin{proof}
+Let $E$ be the event that Algorithm returns a wrong answer.
+
+Let $F$ be the event that adversary changed the value at index $x$ in the table.
+
+Let $G$ be the event that adversary changed the value at index $y$ in the table.
+
+It is clear that if the values at indices $x$ and $y$ were not changed by the adversary then the Algorithm would return the correct answer.
+So, $$P(E) \leq P(F \cup G)$$
+By Union Theorem, $$P(E) \leq (P(F)+P(G))$$
+Now, $$P(F) = 1/5$$ because $x$ is selected randomly from $0$ to $n-1$
+
+Also, $$P(G) = 1/5$$ as the value of $y$ is uniquely determined by $x$.
+
+Hence, $$P(E) \leq 2/5$$
+Thus, the Algorithm returns the correct answer with probability greater than or equal to $3/5$.
+
+Proved.
+\end{proof}
+
+\textbf{Time Complexity :} $O(1)$
+
+\subsubsection*{(b)}
+\textbf{Algorithm:}
+\begin{enumerate}
+    \item Declare an empty set S.
+    \item Repeat $k$ times.
+    \begin{itemize}
+        \item Select a number $x$ uniformly randomly between $0$ and $n-1$.
+        \item Define the mapping, 
+\begin{align*}
+    H(x) & = \begin{cases}
+        (z - x) \quad \text{ if } 0 \leq x \leq z \\
+    (n - 1 + z - x) \quad \text{ if } (z-1) \leq x \leq (n-1) 
+        \end{cases}
+\end{align*}
+        \item Set $y = H(x)$ 
+        \item Insert $(G(x)+G(y))\ mod\ m$ into S.
+    \end{itemize}
+    \item Return the element with frequency greater than or equal to $k/2$ from the set $S$.
+    \item If there is no such element then return any random number from $S$.
+\end{enumerate} 
+\begin{warn}[Lemma 1: Probability that Algorithm returns wrong answer is less than or equal to $\frac{3}{2}\left(\frac{24}{25}\right)^{k/2}$.]
+\end{warn}
+
+\begin{proof}
+Consider a biased coin $C$ which shows head with a probability of $2/5$.
+
+Let $E$ be the event that Algorithm returns a wrong answer. Then $P(E)$ is same as the probability that there are less than $k/2$ correct values in the set $S$.
+
+By Lemma 1 we can say that this probability is less than or equal to the probability that more than $k/2$ heads appear in $k$ tosses of coin C.
+
+Call $G$ to be the event that more than $k/2$ heads appear in $k$ tosses of coin C.
+\begin{align*}
+P(E) & \leq P(G) \\
+P(E) & \leq \sum_{r = k/2}^{k}\binom{k}{r}\left(\frac{2}{5}\right)^r\left(\frac{3}{5}\right)^{k-r} \\
+P(E) & \leq \binom{k}{k/2}\left(\frac{2}{3}\right)^{k/2}\sum_{r = k/2}^{k}\left(\frac{2}{5}\right)^r\left(\frac{3}{5}\right)^{k-r} \\
+P(E) & \leq \binom{k}{k/2}\left(\frac{2}{3}\right)^{k/2}\left(\frac{3}{5}\right)^k\sum_{r = k/2}^{k}{\frac{2}{3}}^r \\
+P(E) & \leq \binom{k}{k/2}\left(\frac{2}{3}\right)^{k/2}\left(\frac{3}{5}\right)^k\frac{1}{1-2/3}
+\end{align*}
+
+Using Stirling's approximation,
+\begin{align*}
+P(E) & \leq 3\frac{4^{k/2}}{2}\left(\frac{3}{5}\right)^k\left(\frac{2}{3}\right)^{k/2} \\
+P(E) & \leq \frac{3}{2}\left(\frac{24}{25}\right)^{k/2}
+\end{align*}
+Proved.
+\end{proof}
+Thus the probability that the Algorithm returns the correct answer is greater than or equal to $$1 - \frac{3}{2}\left(\frac{24}{25}\right)^{k/2}$$
+For $k > 140$ algorithms returns correct answer with a probability greater than $0.9$.
+
+\textbf{Time Complexity :} Implement $S$ as a hash table, and hence it takes $O(1)$ time to increase the count of an element into it. Also we can find the element with largest frequency in $O(k)$ time from $S$ in Step $3$.
+
+Thus the overall time complexity of the algorithm is $O(k)$.
+
+\pagebreak
+
+
+
+% start of Q3
+\begin{question}[]
+\textbf{(a) Design a randomized Monte Carlo algorithm that will take $O(n^2)$ time on word RAM model per
+update. Write pseudocode for handling edge insertion and edge deletions.} \\
+\textbf{(b) Focus on any pair $(u, v)$. Analyse the probability that $T[u, v]$ will be incorrect at any stage. How will you reduce this error probability to less than $n^{-4}$.} \\
+\textbf{(c) Use some probability tool to ensure that T[] will be completely correct at any stage with probability at least $1 - 1/n^2$.}
+
+\end{question}
+\subsubsection*{(a)}
+Some results that are deduced from questions given in problem are
+\begin{itemize}
+ \item Paths $u \rightarrow v$, that pass through $(x, y)$ are $N_{u,x}*N_{y,v}$ (\textit{Since 
+   for each path from $u \rightarrow v$, there are $N_{y,v}$ paths to $v$}).
+ \item If an edge $(x, y)$ is deleted then all the paths, that pass through $(x,y)$ will be deleted.
+    So by above result $N_{u,v}$ is decreased by $N_{u,x}*N_{y,v}$.
+ \item If an edge $(x, y)$ is added then all paths from $u \rightarrow v$, that pass through $(x,y)$
+      will be added, or $N_{u,v}$ increases by $N_{u,x}*N_{y,v}$.
+
+\end{itemize}
+In the algorithm suggested in question there was a \textbf{serious problem}, so first lets discuss that.
+
+\begin{warn}[Lemma 1:]
+\textbf{Total number of paths from $u$ to $v$ is $\leq 2^{n}$, where n is total number of nodes.} 
+\end{warn}
+
+\begin{proof}
+A path is a sequence of vertices $\langle (u=)x_1,x_2,\ldots.,x_k(=v) \rangle$,
+such that $(x_{i},x_{i+1}) \in E$ for each $1 \leq i < k$ and no vertex is repeated in this sequence.
+Note that length of sequence can vary from $2 \rightarrow n$. So the total number of paths from 
+$u \rightarrow v$ is given by: $N_{u,v} = \sum_{i=2}^{n} \binom{n}{i} \hfill$ \textit{(there
+is only 1 way to order these $i$ nodes, because if we consider 2 permutation, there would be atleast 
+1 pair of nodes $(x,y)$ such that in one permutation $x$ appears after $y$ and in other $y$
+appears after $x$. That would mean that there is a cycle, as we have path $x \rightarrow y$ and 
+$y \rightarrow x$. which contradicts to the fact that $G$ is DAG.)}. Consider:
+
+
+\begin{align*}
+ (1+x)^n & = \sum_{i=0}^{n} \binom{n}{i} x^i \ substituting\ x = 1\ we\ get: \\
+ 2^n & = \sum_{i=0}^{n} \binom{n}{i} \\
+ \textit{or}\ N_{u,v} & \leq 2^n \qedhere
+\end{align*}
+\end{proof}
+
+\begin{warn}[Result:] 
+\textbf{On a word ram model of computation, product of $N_{u,x}, N_{y,v}$, would take O($\dfrac{n}{\log n}$)
+worst case time.}
+\end{warn}
+\begin{proof}
+From Lemma 1, we know that $N_{a,b}$ can be close to $2^n$ in worst case. On a word ram model computation involving
+$\log n$ bits take $O(1)$ time. But here maximum number of bits can be $\log (2^n) = O(n)$ bits. which would take
+$O(\dfrac{n}{\log n})$, for each computation.
+\end{proof}
+
+\textbf{Serious Problem:} Since computation of product in word ram model takes $O(\dfrac{n}{\log n})$ time, each update
+will take $O(\dfrac{n^3}{\log n})$ time, instead of just $O(n^2)$.
+
+\subsubsection*{Solution Sketch}
+Main problem that we are facing is that $N_{a,b}$ can be very large, which wouldn't take $O(1)$ time on word ram model.
+So one thing we can do is: perform all operations in modulo $p$, \textit{where p is a prime which is of order
+polynomial in $n$, now since it is polynomial in $n$, all computation involving $p$ can be done in $O(1)$ time in word ram model}. More presisely perform all updated in $N_{a,b}$, weather addition, deletion, or computing product $N_{a,b}*N_{x,y}$
+preform in $\mod p$.
+\begin{warn}[Note:]
+\begin{align*}
+N[u][v] & = N_{u,v} \mod p
+\end{align*}
+\end{warn}
+All the queries(deletion or addition of nodes) can now be handled by 3 results given on top on this answer, and using them in $\mod p$. Underlying algorithm is given by:
+
+\textbf{Algorithm:}
+\begin{lstlisting}[columns=fullflexible]
+p := prime choosen randomly and uniformly from (2,t)
+N := n x n matrix storing number of edges modulo p
+M := n x n matrix
+q := query
+
+if((x,y) deleted)
+                                             # deletion
+    for u := 1 to n
+        for v := 1 to n
+            M[u][v] = (N[u][v] - N[u][x]*N[y][v]) mod p
+    N = M
+else
+                                             # addition
+    for u := 1 to n
+        for v := 1 to n
+            M[u][v] = (N[u][v] + N[u][x]*N[y][v]) mod p
+    N = M
+
+procedure Query_for_reachability(u,v)
+    if N[u][v] is 0
+        return false
+    else
+        return true
+\end{lstlisting}
+\subsubsection*{Complexity analysis}
+For each update, we change the value of $N(a,b)$ for all nodes. and then finally update the matrix $N$ to this new
+matrix $M$. Total computation required in single update is given by $O(n^2) * O(time\_for\_product)$ \textit{(as 
+there are $n^2$ pairs and on each pair we do a product operation)}. Now since
+we are doing computation in $\mod p$, it is guaranteed that time\_for\_product would be $O(1)$, since $p$ is polynomial in $n$.
+Hence, $T = O(n^2)$. 
+
+\subsubsection*{(b)}
+
+The only case when the algorithm in (a) returns the wrong answer for pair $(u,v)$ is when the number of paths between $u,v$ are non-zero and the algorithm computes that they are $0$. Call this event to be $E$.
+
+Now, call the event that $(N[u,v] - N[u,x]*N[y,v])\ mod\ p = 0$ or $(N[u,v] + N[u,x]*N[y,v])\ mod\ p = 0$ to be $F$.
+
+Let $\pi(x)$ denotes the no of primes less than or equal to $x$.
+
+Let $X(a)$ be the no of primes which divide $a$.
+
+Clearly, $$a \geq 2^{X(a)}$$
+Thus, $$X(a) \leq \log(a)$$
+\begin{warn}[Lemma 1: Probability that $A\ mod\ p = 0$ when $p$ is a random prime no from $(2,t)$ is less than or equal to $\frac{log(A}{\pi(t)}$.]
+\end{warn}
+
+\begin{proof}
+Since $p$ is selected randomly uniformly from all primes from $(2,t)$,
+$$P(A\ mod\ p = 0) = \frac{X(A)}{\pi(t)}$$
+Thus, 
+$$P(A\ mod\ p = 0) = \frac{\log (A)}{\pi(t)}$$
+\end{proof}
+
+Since, $$N_{u,v} \pm N_{u,x}*N_{y,v} \leq 2^n$$ by Lemma 1 of Part (a).
+
+Let $P(D)$ be the probability that one of $(N[u,v] - N[u,x]*N[y,v])\ mod\ p = 0$ or $(N[u,v] + N[u,x]*N[y,v])\ mod\ p = 0$.
+
+By Lemma 1,
+$$P(D) \leq \frac{log(2^n)}{\pi(t)}$$ 
+
+Call the probability that $T[u,v]$ will be incorrect at any stage to be $P(T)$
+$$P(T) = P(D)$$
+$$P(T) \leq \frac{n}{\pi(t)}$$
+Now,
+$$\pi(t) \approx \frac{t}{log(t)}$$
+Thus, $$P(T) \leq \frac{n*log(t)}{t}$$
+
+Take $t > 5*n^5log(n)$. Then, $$P(T) \leq n^{-4}$$
+Thus for $t > 5*n^5log(n)$, probability that $T[u,v]$ will be wrong at any stage is less than or equal to $n^{-4}$.
+
+\subsubsection*{(c)}
+Let $E$ be the event that $T[]$ will be completely correct at any stage.
+
+Let $E_{u,v}$ be the event that $T[u,v]$ will be wrong at any stage.
+
+Clearly, $$P(E) = 1 - \bigcup\limits_{u,v \epsilon V} P(E_{u,v})$$
+By part (b) and Union Theorem, 
+$$P(E) \geq 1 - \sum\limits_{u,v \epsilon V} n^{-4}$$
+or,
+$$P(E) \geq 1 - n^2*n^{-4}$$
+Thus, $$P(E) \geq 1 - n^{-2}$$ for $t > 5*n^5\log (n)$
+
+ 
+\end{document}
