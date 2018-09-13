@@ -1,0 +1,210 @@
+
+%=======================   Default Templete   ==================
+\documentclass[a4paper]{article}
+
+
+% file with some default definations
+\input{/home/raghukul/github/CS648/assignment1/structure.tex}
+\usepackage{listings}
+\lstset{language=Python, basicstyle=\normalsize\sffamily\linespread{0.8}, numbers=left, numberstyle=\small, stepnumber=1, numbersep=5pt}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{\NAME\ (\ANDREWID)}}
+\chead{\textbf{Assignment \HWNUM}}
+\rhead{\COURSE}
+
+
+%==================Header details======================
+\newcommand\NAME{Raghukul, Vibhor}
+\newcommand\ANDREWID{160538, 160778}
+\newcommand\HWNUM{2}
+\newcommand\COURSE{CS648}
+%======================================================
+
+% available formatted sections:
+% - COMMAND LINE ENVIRONMENT: \begin{commandline} \end{commandline}
+% - FILE CONTENTS ENVIRONMENT: \begin{file}[optional filename, defaults to "File"]
+% - NUMBERED QUESTIONS ENVIRONMENT: \begin{question}[optional title]
+% - WARNING TEXT ENVIRONMENT(can also be used for note): \begin{warn}[optional title, defaults to "Warning:"]
+% - INFORMATION ENVIRONMENT(can be used to mention given details): \begin{info}[optional title, defaults to "Info:"]
+
+%===============================================================
+\begin{document}
+
+% start of Q1
+\begin{question}
+\textbf{Using prime numbers for 2-D pattern matching}
+\end{question}
+Some Results that we know are:
+\begin{itemize}
+    \item{$M(\varepsilon) = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} $ \hfill \textit{(i)}}
+    \item{$M(0) = \begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix} $ \hfill \textit{(ii)}}
+    \item{$M(1) = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} $ \hfill \textit{(iii)}}
+    \item{For non-empty strings $x$ and $y$, $M(xy) = M(x) × M(y)$
+    \hfill \textit{(iv)}
+    }
+    \item{$M(x)$ is defined for all $x\in \{0,1\}^{*}$ \hfill \textit{(v)}}
+    \item{$M(x) = M(y) \Rightarrow x = y$ \hfill \textit{(vi)}}
+\end{itemize}
+\subsection*{(a)}
+Note that $M(z)$ a string $z$ of length $k$ can be calculated recursively as: \\
+\noindent\rule{\textwidth}{0.4pt}
+\textbf{Algorithm 1:} \\
+\noindent\rule{\textwidth}{0.2pt}
+\begin{lstlisting}[columns=fullflexible] 
+def compute_M(z, k):    
+    if(k = 1)
+        if(z[0] = 0)
+            return M(0)
+        else
+            return M(1)
+    else
+        return M(z[0])*compute_M(z+1, k-1)
+\end{lstlisting}
+% \noindent\rule{\textwidth}{0.4pt}
+\vspace{1.5em}
+Time Complexity of above algorithm $= O(k)$. So now we have a method to compute fingerprint in form of $2 \times 2$ matrix, in $O(k)$ where $k$ is length of string. First we compute figerprint of pattern in $O(m)$ time, and the we compute fingerprint for all continuous strings of length $m$ ($n - m + 1$ such strings) in text. and then we comapare these $n - m + 1$ fingerprints with fingerprint of pattern. By result \textit{$(vi)$} we know that if fingerprint are equal, then so is the actual string. Now we need to find an efficient way to compute fingerprint of all the strings of length $m$ in text.
+
+\subsubsection*{Computation of M for all string in text of length \boldmath$ m $}
+let text ($t$) = $t_1t_2\ldots.t_n$, $M_{i}$ be the fingerprint($M$) of $t[i,m + i - 1]$. Now how can we compute $M_{i+1}$ efficiently from $M_i$? Note that $M_{i+1}$ is fingerprint of $t[i+1,m+i] = t_{i+1} t_{i+2}\ldots t_{m+i}$, and $t[i,m +i-1] = t_i t_{i+1}\ldots t_{m+i-1}$.
+$$M_{i+1} = M(t_{i+1})M(t_{i+2})\ldots M(t_{m+i})$$
+$$M_1 = M(t_{i})M(t_{i+1})\ldots M(t_{m+i-1})$$
+hence we get:
+$$M_{i+1} = M(t_i)^{-1} * M_i * M(t_{m+i}) $$
+Since any operation involving aithematics is assumed to be in $O(1)$, the above computation can be done in constant time, with memoization.When we have the fingerprint for all $M_i$, we just compare them with fingerprint of pattern, and report if we find a collision.
+
+\pagebreak
+
+\noindent\rule{\textwidth}{0.4pt}
+\textbf{Algorithm 2:} \\
+\noindent\rule{\textwidth}{0.2pt}
+\begin{lstlisting}[columns=fullflexible] 
+T := text of length n
+P := pattern of length m
+M[1:n-m+1] := list to store fingerprints of T
+N[0:1] := list to store fingerprint of base case
+
+N[0] = {1, 0, 1, 1}       # base case
+N[1] = {1, 1, 0, 1}       # base case
+
+M_P := compute_M(P, m)
+M[1] = compute_M(T, m)
+
+for i in (2,n-m+1)
+    M[i] = matrix_inverse(N[ T[ i - 1 ] ]) * M[i - 1] * N[ T[ m + i - 1 ] ]
+
+for i in (1,n-m+1)
+    if (M[i] = M_P)
+        return i
+\end{lstlisting}
+\vspace{1.5em}
+\subsubsection*{Time Complexity:}
+Note that compute\_M takes $O(k)$ time for a string of length $k$. So computation of M\_P would take $O(m)$ time, similar to this computation of M[1] would also take $O(m)$ time. Since computation of M[i] from M[i - 1] takes $O(1)$ time, time complexity of computing M[] is $O(n-m)$, and in the end we just do a $O(1)$ comparison $n-m+1$ time.
+$$T_{n,m} = O(m) + O(m) + O(n-m) + O(n-m + 1)$$
+$$T_{n,m} = O(2n + 1) \approx O(n + m) \text{(since m < n)}$$
+
+\subsection*{(b)}
+Let $M(P)$ be the fingerprint of pattern.
+The only case when the algorithm in $(b)$ will give wrong answer, is when the pattern and string don't match, but $M_i = M(P)$. Or $M_i - M(P) = 0 \mod p$, which means that all the $4$ entries of the matrix $M_i - M(P) = M(E)$ are zero modulo $p$.\\
+So the event when error will occur is defined as: $M(E)_{11}, M(E)_{12}, M(E)_{21}, M(E)_{22} = 0 \mod p$ and P, T[i:i+m-1] don't match. \\
+Let $P(\delta)$ denote the error probability (note that below equalities are given $\mod p$)
+$$P(\delta) = P(M(E)_{11} = 0 \cap M(E)_{12} = 0 \cap M(E)_{21} = 0 M(E)_{22} = 0)$$
+$$P(\delta) \leq P(M(E)_{11} = 0) \text{ since $\delta$ is a subset of this event}$$
+
+Let $\pi(x)$ denotes the no of primes less than or equal to $ x$. \\
+Let $X(a)$ be the no of primes which divide $a$. \\
+Clearly, $$a \geq 2^{X(a)}$$
+Thus, $$X(a) \leq \log(a)$$
+\begin{warn}[Lemma 1: Probability that $A\ mod\ p = 0$ when $p$ is a random prime no from $(2,t)$ is less than or equal to $\frac{log(A}{\pi(t)}$.]
+\end{warn}
+
+\begin{proof}
+Since $p$ is selected randomly uniformly from all primes from $(2,t)$,
+$$P(A\ mod\ p = 0) = \frac{X(A)}{\pi(t)}$$
+Thus, 
+$$P(A\ mod\ p = 0) = \frac{\log (A)}{\pi(t)}$$
+\end{proof}
+Note that $F_n < 2^n$ where $F_n$ is $n^{th}$ finbonacci number, also the terms of $M(Z)$ are bounded by $F_n$ (given in problem).\\
+we know: $$M(Z)_{11} < 2^n$$
+By above lemma we know that: $$P(\delta) \leq \dfrac{\log (2^n)}{\pi(t)}$$
+$$P(\delta) \leq \frac{n}{\pi(t)}$$
+Now,
+$$\pi(t) \approx \frac{t}{log(t)}$$
+Thus, $$P(\delta) \leq \frac{n*log(t)}{t}$$
+
+Take $t > 5*n^5log(n)$. Then, $$P(\delta) \leq n^{-4}$$
+Thus for $t > 5*n^5log(n)$, probability that fingerprint will match, provided actual string don't match, would be less that $n^{-4}$.
+
+\subsection*{(c)}
+In this problem we use the fingerprinting approach, we compute fingerprint of matrices of size $m \times m$, same way as we did above.First we flatten the 2D matrix into a 1D matrix of size $m^2$, by appending $2^{nd}$ row after $1^{st}$ row, and so on. This computation for each matrix in text of size $m \times m$, needs to be computed efficienty, to achieve $O(n^2)$ Complexity. \\ 
+Note that here also our fingerprint is a 2D matrix of size $2 \times 2$. \\
+\noindent\rule{\textwidth}{0.4pt}
+\textbf{Algorithm 1:} \\
+\noindent\rule{\textwidth}{0.2pt}
+\begin{lstlisting}[columns=fullflexible] 
+T := n x n matrix in which we need to search for pattern
+P := pattern (dimension m x m)
+p := prime number choosen uniformly and randomly from (2, t)
+N[0:1] := list to store fingerprint of base case
+
+N[0] = {1, 0, 1, 1}       # base case
+N[1] = {1, 1, 0, 1}       # base case
+
+# first we compute the fingerprint of all continuous strings of length m in
+# each row (n-m+1 such string in each row)
+F := 2D list to store above fingerprint
+# F[i][j] stores fingerprint of string in ith row starting at index j
+
+for i in (1,n)
+    F[i][1] = compute_M(T[i], m) mod p
+for i in (1,n)
+    for j in (2,n-m+1)
+        F[i][j] = matrix_inverse(N[T[i][j - 1]]) * F[i][j - 1] * N[T[i][m + j - 1]] mod p
+
+# store fingerprint of pattern
+P_new = flatted(P)
+M_P = compute_M(P_new, m*m) mod p
+
+# Now we compute fingerprint of all continuous matrices of size m x m using F[i][j]
+G := 2D list to store this fingerprint
+
+# G[i][j] denote fingerprint of matrix with left top at i,j and right bottom at i+m-1, j+m-1
+# Since fingerprint is calculated by flattening, hence G[i][j] = F[i][j]*F[i+1][j]*...F[i+m-1][j]
+
+# we do a column wise traversal
+for j in (1, n-m+1)
+    G[1][j] = F[1][j]*F[2][j]*...F[m][j] mod p
+for j in (1, n-m+1)
+    for i in (2, n-m+1)
+        G[i][j] = matrix_inverse(F[i - 1][j]) * G[i - 1][j] * F[i+m-1][j] mod p
+
+# fingerprint matching
+for i in (1, n-m+1)
+    for j in (1, n-m+1)
+        if (G[i][j] = M_P)
+            return (i,j)
+\end{lstlisting}
+\vspace{1.3em}
+
+\subsubsection*{Time Complexity}
+Computing matrx F[i][1] for all $i \in (1, n)$ would take $O(m) * n$ time. Computing rest of the entries of F would take $O(1)$ time per entry, so a total of $O(n*(n-m))$. Calculation of M for P would take $O(m^2)$ time. Computing G[1][j] for all $j\in (1,n-m+1)$ would take $O(m) * (n-m+1)$ time. And lastly computation of remaining entries of G would take $O(1)$, for each entry, so total $O((n-m)*(n -m + 1))$. So in total we get 
+$$T_{n,m} = O(mn) + O(n(n - m)) + O(m^2) + O(m*(n - m + 1)) + O((n-m)*(n-m+1))$$
+Or, $$T_{n,m} = O(2n^2 + m^2 - mn + n - 2m) \approx O(n^2) \text{ since m < n}$$
+
+
+\subsubsection*{Error Probability}
+Error analysis is similar to previous problem, the only thing that changes is that now $M[i][j]_{11}$ would be bounded by $F_{n}^2$, since we are flattening 2D square matrix.\\
+Note that $F_n < 2^n$ where $F_n$ is $n^{th}$ finbonacci number, also the terms of $M[i][j]$ are bounded by $F_n^2$.\\
+we know: $$M(Z)_{11} < 2^{2n}$$
+By above lemma we know that: $$P(\delta) \leq \dfrac{\log (2^{2n})}{\pi(t)}$$
+$$P(\delta) \leq \frac{2n}{\pi(t)}$$
+Now,
+$$\pi(t) \approx \frac{t}{log(t)}$$
+Thus, $$P(\delta) \leq \frac{2n*log(t)}{t}$$
+
+Take $t > 10*n^5log(n)$. Then, $$P(\delta) \leq n^{-4}$$
+Thus for $t > 10*n^5log(n)$, probability that fingerprint will match, provided actual matrices don't match, would be less that $n^{-4}$.
+\end{document}
