@@ -4,7 +4,7 @@
 
 
 % file with some default definations
-\input{/home/raghukul/github/CS648/assignment1/structure.tex}
+\input{structure.tex}
 \usepackage{listings}
 \lstset{language=Python, basicstyle=\normalsize\sffamily\linespread{0.8}, numbers=left, numberstyle=\small, stepnumber=1, numbersep=5pt}
 \usepackage{fancyhdr}
@@ -127,7 +127,9 @@ $$P(A\ mod\ p = 0) = \frac{X(A)}{\pi(t)}$$
 Thus, 
 $$P(A\ mod\ p = 0) = \frac{\log (A)}{\pi(t)}$$
 \end{proof}
-Note that $F_n < 2^n$ where $F_n$ is $n^{th}$ finbonacci number, also the terms of $M(Z)$ are bounded by $F_n$ (given in problem).\\
+\begin{warn}[Note: Here we are only considering the first instance where the algorithm fails for our analysis]
+\end{warn}
+Note that $F_n < 2^n$ where $F_n$ is $n^{th}$ fibonacci number, also the terms of $M(Z)$ are bounded by $F_n$ (given in problem).\\
 we know: $$M(Z)_{11} < 2^n$$
 By above lemma we know that: $$P(\delta) \leq \dfrac{\log (2^n)}{\pi(t)}$$
 $$P(\delta) \leq \frac{n}{\pi(t)}$$
@@ -258,13 +260,52 @@ Z_i & = \begin{cases}
         0 \quad \text{otherwise}
 \end{cases}
 \end{align*}
-$Z_1$ is random variable corresponding to first element, and similarly for other values. So by linerity of expectation, we get $E[X] \leq \sum_{i=1}^{k-1} \dfrac{(i-1)c}{n}$ (using previous part of problem). 
+$Z_1$ is random variable corresponding to first element, and similarly for other values. So by linearity of expectation, we get $E[X] \leq \sum_{i=1}^{k-1} \dfrac{(i-1)c}{n}$ (using previous part of problem). 
 $$E[X_k |\xi_{k}] \leq \dfrac{E[x]c}{n}$$
 $$E[X_k |\xi_{k}] \leq \dfrac{c}{n}\sum_{i=1}^{k-1} \dfrac{(i-1)c}{n}$$
 $$E[X_k |\xi_{k}] \leq \dfrac{c^2(k-1)(k-2)}{2n^2}$$
 
 \subsubsection*{(3)}
+Let the random variable denoting the total number of collisions is $X$.
 
+Since collisions are contributed only by table $T_2$,
+$$X \leq X_1 + ... + X_s$$
+So trivially,
+$$E[X] \leq \sum_{k=1}^{s}P(\varepsilon_k)E[X_k|\varepsilon_k]$$
+$$E[X] \leq \sum_{k=1}^{s}\frac{(k-1)c}{n}\dfrac{c^2(k-1)(k-2)}{2n^2}$$
+$$E[X] \leq \sum_{k=1}^{s}C\frac{k^3}{n^3}$$
+$$E[X] \leq C\left(\frac{s(s+1)}{2}\right)^2\frac{1}{n^3}$$
+$$E[X] \leq R\frac{(s+1)^4}{n^3}$$
+To get expected no of collisions less than $1/2$ take $n = m(s+1)^{\frac{4}{3}}$ where $m$ is a suitable constant.
+
+So we have $E[X] \leq \frac{1}{2}$ when $n = O(s^{\frac{4}{3}})$
+
+Probability of no collision, $$P(X = 0) = 1 - P(X \geq 1)$$
+Using Markov's inequality,
+$$P(X = 0) \geq 1 - \frac{1}{2}$$
+$$P(X = 0) \geq \frac{1}{2}$$
+
+\pagebreak
+\noindent\rule{\textwidth}{0.4pt}
+\textbf{Algorithm 1:} \\
+\noindent\rule{\textwidth}{0.2pt}
+\begin{lstlisting}[columns=fullflexible] 
+repeat
+    Pick h2 randomly unniformly from H
+    # The next step takes O(s) time
+    t = number of collisions for S using the algorithm given
+until t=0
+for each a in S
+    i = h1(a)
+    if T1(i) is empty then
+        Insert a in the list T(i)
+    else
+        j = h2(a)
+        Insert a in list T2(j)
+\end{lstlisting}
+\vspace{1.3em}
+
+Thus the perfect hash function can be calculated using the above algorithm in $O(s^{\frac{4}{3}})$ space.
 \pagebreak
 
 
@@ -341,3 +382,4 @@ $$\frac{B1}{B2} \geq 1$$
 Thus, the second bound is better.
 
 \end{document}
+
