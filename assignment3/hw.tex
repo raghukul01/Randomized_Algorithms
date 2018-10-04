@@ -1,0 +1,60 @@
+
+%=======================   Default Templete   ==================
+\documentclass[a4paper]{article}
+
+
+% file with some default definations
+\input{structure.tex}
+\usepackage{listings}
+\lstset{language=Python, basicstyle=\normalsize\sffamily\linespread{0.8}, numbers=left, numberstyle=\small, stepnumber=1, numbersep=5pt}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{\NAME\ (\ANDREWID)}}
+\chead{\textbf{Assignment \HWNUM}}
+\rhead{\COURSE}
+
+
+%==================Header details======================
+\newcommand\NAME{Raghukul, Vibhor}
+\newcommand\ANDREWID{160538, 160778}
+\newcommand\HWNUM{3}
+\newcommand\COURSE{CS648}
+%======================================================
+
+% available formatted sections:
+% - COMMAND LINE ENVIRONMENT: \begin{commandline} \end{commandline}
+% - FILE CONTENTS ENVIRONMENT: \begin{file}[optional filename, defaults to "File"]
+% - NUMBERED QUESTIONS ENVIRONMENT: \begin{question}[optional title]
+% - WARNING TEXT ENVIRONMENT(can also be used for note): \begin{warn}[optional title, defaults to "Warning:"]
+% - INFORMATION ENVIRONMENT(can be used to mention given details): \begin{info}[optional title, defaults to "Info:"]
+
+%===============================================================
+\begin{document}
+
+% start of Q1
+\begin{question}
+\textbf{Estimating all-pairs distances exactly}
+\end{question}
+
+
+\pagebreak
+
+% start of Q2
+\begin{question}[]
+\textbf{Rumour Spreading}
+\end{question}
+
+
+\pagebreak
+% start of Q3
+\begin{question}[]
+\textbf{Approximate Ham-Sandwich Cut}
+
+\end{question}
+
+
+\end{document}
+
