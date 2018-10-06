@@ -114,7 +114,60 @@ Taking $\V{K = 400\log n}$ we get that all entries of the distance matrix are co
 \begin{question}[]
 \textbf{Rumour Spreading}
 \end{question}
+We will partition the experiment into following three stages. Let $X$ is the number of persons knowing the rumour at any time.
+The stages are - 
+\begin{enumerate}
+    \item $X < c\log n$
+    \item $c\log n < X < \frac{n}{2}$
+    \item $\frac{n}{2} < X < n$
+\end{enumerate}
+Expected no. of days to spread the rumour is the sum of expected no. of days spent in each of these stages.
 
+\textbf{(1)} Expected no. days spent in stage 1 - 
+
+Let $p$ is the probability that no new person comes to know about the rumour at the end of some day. Let $k$ be the no. of persons knowing the rumour at the start of the day.
+
+Thus,
+$$p = \left(\frac{k}{n}\right)^k$$
+For $1 \leq k < \frac{n}{2}$, $p \leq \left(\frac{1}{2}\right)^k \leq \frac{1}{2}$
+
+So, expected no. of days for at least one person to know the rumour is $\frac{1}{1 - p} \leq 2$.
+
+Thus the expected no. of days for $c\log n$ persons to know the rumour is less than or equal to $2c\log n$.
+Expected no. of days spent in first stage, $$N_1 = 2c\log n$$
+
+\textbf{(2)} Expected no. days spent in stage 2 - 
+
+
+
+\textbf{(3)} Expected no. days spent in stage 3 - 
+
+Let $k$ be the no. of persons knowing the rumour at the start of the day and let $r$ be the no. of persons not knowing the rumour at the start of the day ($r = n-k$).
+
+Let $p_i$ be the probability that $i^{th}$ person does not know the rumour at the end of the day.
+$$p_i = \left(\frac{n-1}{n}\right)^k$$
+Since $k > \frac{n}{2}$,
+$$p_i \leq \left(1 - \frac{1}{n}\right)^{\frac{n}{2}} \approx \frac{1}{\sqrt{e}}$$
+Let $R_i$ be the random variable which takes value $1$ if the $i^{th}$ person does not know the rumour at the end of the day and $0$ otherwise.
+
+Let $R$ be the no. of persons not knowing the rumour at the end of the day.
+
+Now by linearity of expectation,
+$$E[R] = \sum_{i=1}^r E[R_i]$$
+$$E[R] = \sum_{i=1}^r p_i + 0(1- p_i)$$
+$$E[R] \leq \frac{r}{\sqrt{e}}$$
+Define a day to be good if the no. of persons not knowing the rumour reduces by more than $\frac{1}{\sqrt{2}}$ from the start of the day.
+
+Thus the expected no. of good days required for spreading the rumour to $n$ people is $2\log n$.
+
+Let $p$ be the probability that a day is bad,
+$$p = P\left[R \geq \frac{r}{\sqrt{2}}\right]$$
+Using Markov's inequality,
+$$p \leq \frac{\sqrt{2}E[R]}{r}$$
+$$p \leq \frac{\sqrt{2}}{\sqrt{e}} \leq \frac{7}{8}$$
+and so probability of a day being good is at least $\frac{1}{8}$.
+
+Thus the Expected no. of days spent in third stage, $$N_3 = 16\log n = q \log n$$
 
 \pagebreak
 % start of Q3
