@@ -9,7 +9,7 @@
 \lstset{language=Python, basicstyle=\normalsize\sffamily\linespread{0.8}, numbers=left, numberstyle=\small, stepnumber=1, numbersep=5pt}
 \usepackage{fancyhdr}
 \setlength{\parindent}{0pt}
-
+\usepackage{algorithm2e}
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{\textbf{\NAME\ (\ANDREWID)}}
@@ -22,6 +22,7 @@
 \newcommand\ANDREWID{160538, 160778}
 \newcommand\HWNUM{3}
 \newcommand\COURSE{CS648}
+\newcommand{\V}[1]{\boldsymbol{#1}}
 %======================================================
 
 % available formatted sections:
@@ -38,8 +39,75 @@
 \begin{question}
 \textbf{Estimating all-pairs distances exactly}
 \end{question}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{$G$, partial distance matrix $M$}
+\KwOut{complete distance matrix $M$ with error probability $< 1 - 1/n^2$}
+ $D \leftarrow n$ x $n$ matrix to store distance \\ 
+ \For{$i \leftarrow 1$ \KwTo $n$} {
+ 	\For{$j \leftarrow 1$ \KwTo $n$} {
+ 		\uIf{$M[i][j] =$ \#}{
+ 			$D[i][j]$ = infinity
+ 		}
+ 		\uElse {
+ 			$D[i][j] = M[i][j]$
+ 		}
+ 	}
+ }
+ \For{$k \leftarrow 1$ \KwTo $K$} {
+ 	$w \leftarrow$ Random vertex in $[1:n]$ \\
+ 	$dist = bfs($G, w$)$ \\
+ 	\For{$i \leftarrow 1$ \KwTo $n$} {
+ 		\For{$j \leftarrow 1$ \KwTo $n$} {
+ 		    $D[i][j] = min(D[i][j], dist[i] + dist[j])$
+ 		}
+ 	}
+ }
 
+ \Return{$M$}
+ \caption{Monte Carlo Algorithm for exact distance}
+\end{algorithm}
+\subsection*{Complexity analysis}
+In above algorithm $bfs(G, s)$ returns an array storing shortest distance of $s$ to each vertex in $G$.
+Time complexity for $bfs$ is $O(n + m)$ ($m$ = number of vertices in graph).
+In worst case there can be atmost $n \choose 2$ edges, i.e worst case complexity of $bfs$ is $O(n^2)$. Time taken to update $D$ in one iteration is also $O(n^2)$.
+Since outer loop runs for $K$ times, total complexity is $O(n^2K)$.
+In below analysis it is show that $K = O(\log n)$, hence complexity of above algorithm is $\V{O(n^2)\log n}$.
 
+\subsection*{Error Analysis}
+
+Error will occur if there are $\geq 1$ entries in $D$ which are not equal shortest path distance.
+\begin{align*}
+P(error) &= P(M[1][1] \text{ wrong } \cup M[1][2] \text{ wrong } \ldots \cup M[n][n]\text{ wrong })
+\end{align*}
+Applying Boole's inequality we get:
+\begin{align*}
+P(error) &\leq n^2*P(M[i][j] \text{ wrong }) \text{ ( distance between $i,j > n/100$ )}
+\end{align*}
+Note that there is $\leq$ sign in above line since the points for which distance $\leq n/100$ matrix $M$ stores correct value (since the value is taken directly from partial distance matrix).
+
+\subsubsection*{$\V{M[i][j]}$ computed wrong}
+We know that distance between $i, j$ is greater than $n/100$, i.e number of nodes between shortest path from $i$ to $j$ is $\geq n/100$.
+So now consider first iteration of first loop. \\
+Note that $w$ is choosen randomly, hence the probability that $w$ belongs to shortest path from $i$ to $j$ is $\geq \dfrac{n/100}{n} = \dfrac{1}{100}$. \\
+If $w$ belong to shortest path then $D[i][j]$ will be updated correctly and will contain shortest path distance (since we are doing $bfs$ from $w$, we get shortest path value from $w\rightarrow i, w\rightarrow j$, $M[i][j]$ is simple the sum of these $2$ values).\\
+Probability that $D[i][j]$ is wrong ($P(\delta)$) $\leq \dfrac{99}{100}$ \\
+Probability that $D[i][j]$ is wrong even after $K$ iteration $\leq P(\delta)^{K} = \Bigg( \dfrac{99}{100} \Bigg)^K$ \\
+Using this value in above equation we get
+
+\begin{align*}
+P(error) &\leq n^2 P(\delta) \\
+		 &\leq n^2 \Bigg( \dfrac{99}{100} \Bigg)^K
+\end{align*}
+We want that error probability is $\leq 1/n^2$, or
+\begin{align*}
+P(error) &\leq \dfrac{1}{n^2} \\
+n^2 \Bigg( \dfrac{99}{100} \Bigg)^K &\leq \dfrac{1}{n^2} \\
+\Bigg( \dfrac{99}{100} \Bigg)^K &\leq \dfrac{1}{n^4}\\
+K\log \Bigg( \dfrac{100}{99}\Bigg) &\geq 4\log n \\
+K &\geq \V{\dfrac{4}{\log(100/99)} \log n}
+\end{align*}
+Taking $\V{K = 400\log n}$ we get that all entries of the distance matrix are correct with probability exceeding $1 - 1/n^2$.
 \pagebreak
 
 % start of Q2
