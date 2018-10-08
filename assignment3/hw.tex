@@ -138,6 +138,29 @@ Expected no. of days spent in first stage, $$N_1 = 2c\log n$$
 
 \textbf{(2)} Expected no. days spent in stage 2 - 
 
+Let the label of the person called by $i^{th}$ person be $x_i$. Clearly, $x_1,x_2,...,x_k$ are independent.
+
+Consider $f(x_1,x_2,...,x_k) : $ No. of persons not knowing the rumor at the end of day, if the no. of persons not knowing the rumor at the beginning of the day was $r$.
+
+By linearity of expectation and since $n - \log n < r$,
+$$E[f] = r\left(\frac{n-1}{n}\right)^{n-r} \leq \frac{r}{c}, c > 1$$
+
+Clearly, $|f(A) - f(A_0)| \leq 1$ for all $A, A_0$ that differ only at the $i^{th}$ coordinate.
+
+Thus, $f$ satisfies Lipshitz condition with parameters $c_1,c_2,...c_k$, $c_i = 1$.
+
+Take $p$ such that $1 < p < c$, call a day good if $f < \frac{r}{p}$ at the end of the day.
+Expected no. of good days required for this stage is $O(\log n)$
+
+$$P[\text{day is bad}] = P\left[f \geq \frac{r}{p}\right]$$
+$$P[\text{day is bad}] = P\left[f - \frac{r}{c} \geq \frac{r}{p}-\frac{r}{c}\right]$$
+$$P[\text{day is bad}] \leq P\left[|f - E[f]| \geq \frac{ru}{c}\right], u > 0$$
+Using the method of bounded difference,
+$$P[\text{day is bad}] \leq \exp\left(\frac{-u^2r^2}{2c^2\sum {c_i}^2}\right)$$
+Since $r < \frac{n}{2}$
+$$P[\text{day is bad}] < \exp\left(\frac{-u^2n^2}{8c^2n}\right)$$
+$$P[\text{day is bad}] \leq \exp(-kn)$$
+Thus probability that a day is bad is inverse exponential in $n$ and hence the expected no. of days spent in second stage = $O(\log n)$.
 
 
 \textbf{(3)} Expected no. days spent in stage 3 - 
