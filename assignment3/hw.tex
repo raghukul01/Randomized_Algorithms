@@ -10,6 +10,7 @@
 \usepackage{fancyhdr}
 \setlength{\parindent}{0pt}
 \usepackage{algorithm2e}
+\usepackage{caption}
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{\textbf{\NAME\ (\ANDREWID)}}
@@ -196,9 +197,148 @@ Thus the Expected no. of days spent in third stage, $$N_3 = 16\log n = q \log n$
 % start of Q3
 \begin{question}[]
 \textbf{Approximate Ham-Sandwich Cut}
-
 \end{question}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{set $P$ of $2n$ points, $n$ red and $n$ blue}
+\KwOut{$(1 + 1/2)$-approximate ham-sandwich cut of $P$}
+\Repeat{\textbf{True}} {
+	$K \leftarrow$ random sample containing $k/2$ red, and $k/2$ blue points. \\
+	$L$ = ExactHamCut($K, k$) \\
+	\tcc*[f]{count red points that lie on either side, with reference to origin.}\\
+	$c\_red\_l \leftarrow 0$  \\
+	$c\_red\_r \leftarrow 0$  \\
+	\For{$i \leftarrow 1$ \KwTo $n$} {
+		\uIf{$P[i]$, $(0,0)$ \text{lie on same side of} $L$} {
+			$c\_red\_l \leftarrow c\_red\_l + 1$\\
+		}
+		\uElse {
+			$c\_red\_r \leftarrow c\_red\_r + 1$\\
+		}
+	}
+	\uIf{$n/4\leq$c\_red\_l $\leq 3n/4$ \&\& $n/4\leq$c\_red\_r $\leq 3n/4$} {
+		$red \leftarrow $ \textbf{True} \\
+	}
+	\uElse {
+		$red \leftarrow$ \textbf{False}\\
+	}
 
 
+	\tcc*[f]{count blue points that lie on either side, with reference to origin.}\\
+	$c\_blue\_l \leftarrow 0$  \\
+	$c\_blue\_r \leftarrow 0$  \\
+	\For{$i \leftarrow n+1$ \KwTo $2n$} {
+		\uIf{$P[i]$, $(0,0)$ \text{lie on same side of} $L$} {
+			$c\_blue\_l \leftarrow c\_blue\_l + 1$\\
+		}
+		\uElse {
+			$c\_blue\_r \leftarrow c\_blue\_r + 1$\\
+		}
+	}
+	\uIf{$n/4\leq$c\_blue\_l $\leq 3n/4$ \&\& $n/4\leq$c\_blue\_r $\leq 3n/4$} {
+		$blue \leftarrow $ \textbf{True} \\
+	}
+	\uElse {
+		$blue \leftarrow$ \textbf{False}\\
+	}
+
+	\uIf{blue \&\& red} {
+		\Return{L}
+	}
+}
+\caption*{Las-Vegas Algorithm for $(1 + 1/2)$-approximate ham-sandwich cut of $P$}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{set $X$ of $m$ points, $m/2$ blue, $m/2$ red}
+\KwOut{Exact Ham-Sandwich cut for $X, m$}
+$R \leftarrow$ set of red points ($|R| = m/2$) \\
+$B \leftarrow$ blue points \\
+\For{$i\leftarrow 1$ \KwTo $m-1$} {
+	\For{$j\leftarrow i+1$ \KwTo $m$} {
+		$L \leftarrow$ line joining $X[i], X[j]$ \\
+		\tcc*[f]{Check if L is an exact ham-sandwich cut.}\\
+		\tcc*[f]{count red points that lie on either side, with reference to origin.}\\
+		$c\_red\_l \leftarrow 0$  \\
+		$c\_red\_r \leftarrow 0$  \\
+		\For{$i \leftarrow 1$ \KwTo $m/2$} {
+			\uIf{$R[i]$, $(0,0)$ \text{lie on same side of} $L$} {
+				$c\_red\_l \leftarrow c\_red\_l + 1$\\
+			}
+			\uElse {
+				$c\_red\_r \leftarrow c\_red\_r + 1$\\
+			}
+		}
+		\uIf{c\_red\_l $\leq m/4$ \&\& c\_red\_r $\leq m/4$} {
+			$red \leftarrow $ \textbf{True} \\
+		}
+		\uElse {
+			$red \leftarrow$ \textbf{False}\\
+		}
+
+		\tcc*[f]{count blue points that lie on either side, with reference to origin.}\\
+		$c\_blue\_l \leftarrow 0$  \\
+		$c\_blue\_r \leftarrow 0$  \\
+		\For{$i \leftarrow 1$ \KwTo $m/2$} {
+			\uIf{$B[i]$, $(0,0)$ \text{lie on same side of} $L$} {
+				$c\_blue\_l \leftarrow c\_blue\_l + 1$\\
+			}
+			\uElse {
+				$c\_blue\_r \leftarrow c\_blue\_r + 1$\\
+			}
+		}
+		\uIf{c\_blue\_l $\leq m/4$ \&\& c\_blue\_r $\leq m/4$} {
+			$blue \leftarrow $ \textbf{True} \\
+		}
+		\uElse {
+			$blue \leftarrow$ \textbf{False}\\
+		}
+
+		\uIf{blue \&\& red} {
+			\Return{L}
+		}
+	}
+}
+\caption*{ExactHamCut}
+\end{algorithm}
+\subsection*{Overview}
+We take random sample of size $k$, containing equal number of red and blue points,
+compute their exact ham sandwich cut, and
+check if this cut is an approximate ham sadwich cut for global set $P$ as well.
+Is yes the we report it, else repeat. Since there are only $k\choose2$ possible cuts, for deterministic algorithm we just check all there possible pair in $O(k)$.
+
+\subsection*{Complexity analysis}
+Time complexity of exact ham-sandwich cut above is $O(k^3)$ (since we need to check $k\choose2$ lines). From below analysis we know that for $k = 40\log n$, the probability that algorithm will not terminate in $1$ iteration is $\leq \dfrac{1}{n^4}$. Complexity of Las Vegas algorithm for approximate ham cut above is in fact a geometric random variable with success probability $\geq 1- \dfrac{1}{n^4}$. Expected number of iteration ($E(t)$) is given by:
+\begin{align*} 
+E(t) &= \dfrac{1}{\text{Success probability}} \\
+	 &\leq \dfrac{1}{ 1- \dfrac{1}{n^4}} \\
+	 &\leq \dfrac{n^4}{n^4 - 1} \\
+\text{or } E(t) &= O(1)
+\end{align*}
+In one iteration we call ExactHamCut ($O(k^3)$) for a set of points of size $k$, and then we check for all points ($O(n)$). So overall complexity of one iteration is $O(k^3 + n) = O(\log^3 n + n)$. Since expected number of iterations is $O(1)$, expected total complexity of algorithm is given by: $O(\log^3 n + n) = \V{O(n)}$.
+
+
+\subsection*{Error Analysis:}
+
+Error will occur when more than $\frac{3n}{4}$ red or $\frac{3n}{4}$ blue points lie on either side of the line which is the exact ham-sandwich cut of $k$ points.
+
+Without loss of generality assume that more than $\frac{3n}{4}$ red points lie on one side of the line.
+
+This means that when selecting $\frac{k}{2}$ red points uniformly randomly, $\frac{k}{4}$ red points got sampled from a cluster of less than $\frac{n}{4}$ points and the other $\frac{k}{4}$ red points were sampled from the remaining points on the other side of the line.
+
+Thus the error probability will not be more than the probability of getting more than $\frac{k}{4}$ tails in $\frac{k}{2}$ tosses of a biased coin having probability of head as $\frac{3}{4}$.
+
+Thus,
+$$P[\text{error}] \leq 2*P[\text{more than } \frac{k}{4} \text{ tails occur in } \frac{k}{2} \text{ tosses}]$$
+Taking into account the blue points, we have multiplied by $2$.
+$$P[\text{error}] \leq 2*\sum_{i=\frac{k}{4}}^{\frac{k}{2}}\binom{\frac{k}{2}}{i}\frac{1}{4}^{i}\frac{3}{4}^{\frac{k}{2}-i}$$
+$$P[\text{error}] \leq 2*\binom{\frac{k}{2}}{\frac{k}{4}}\frac{3}{4}^{\frac{k}{2}}\sum_{i=\frac{k}{4}}^{\frac{k}{2}}\frac{1}{3}^{i}$$
+$$P[\text{error}] \leq 2*\binom{\frac{k}{2}}{\frac{k}{4}}\frac{3}{4}^{\frac{k}{2}}\frac{1}{3}^{\frac{k}{4}}\frac{3}{2}$$
+$$P[\text{error}] \leq 3*4^{\frac{k}{4}}\frac{3}{4}^{\frac{k}{2}}\frac{1}{3}^{\frac{k}{4}}$$
+$$P[\text{error}] \leq 3*\frac{3}{4}^{\frac{k}{4}}$$
+$$P[\text{error}] \leq \frac{1}{2}^{\frac{k}{10}}, k>10$$
+
+To get an error probability less than $n^{-4}$ take $k = 40 \log n$.
 \end{document}
 
