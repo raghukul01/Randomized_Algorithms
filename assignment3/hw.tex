@@ -129,7 +129,7 @@ Expected no. of days to spread the rumour is the sum of expected no. of days spe
 Let $p$ is the probability that no new person comes to know about the rumour at the end of some day. Let $k$ be the no. of persons knowing the rumour at the start of the day.
 
 Thus,
-$$p = \left(\frac{k}{n}\right)^k$$
+$$p = \left(\frac{k-1}{n-1}\right)^k \approx \left(\frac{k}{n}\right)^k$$
 For $1 \leq k < \frac{n}{2}$, $p \leq \left(\frac{1}{2}\right)^k \leq \frac{1}{2}$
 
 So, expected no. of days for at least one person to know the rumour is $\frac{1}{1 - p} \leq 2$.
@@ -306,7 +306,7 @@ $B \leftarrow$ blue points \\
 We take random sample of size $k$, containing equal number of red and blue points,
 compute their exact ham sandwich cut, and
 check if this cut is an approximate ham sadwich cut for global set $P$ as well.
-Is yes the we report it, else repeat. Since there are only $k\choose2$ possible cuts, for deterministic algorithm we just check all there possible pair in $O(k)$.
+Is yes the we report it, else repeat. Since there are only $k\choose2$ possible cuts, for deterministic algorithm we just check all the possible pair in $O(k)$.
 
 \subsection*{Complexity analysis}
 Time complexity of exact ham-sandwich cut above is $O(k^3)$ (since we need to check $k\choose2$ lines). From below analysis we know that for $k = 40\log n$, the probability that algorithm will not terminate in $1$ iteration is $\leq \dfrac{1}{n^4}$. Complexity of Las Vegas algorithm for approximate ham cut above is in fact a geometric random variable with success probability $\geq 1- \dfrac{1}{n^4}$. Expected number of iteration ($E(t)$) is given by:
@@ -327,7 +327,7 @@ Without loss of generality assume that more than $\frac{3n}{4}$ red points lie o
 
 This means that when selecting $\frac{k}{2}$ red points uniformly randomly, $\frac{k}{4}$ red points got sampled from a cluster of less than $\frac{n}{4}$ points and the other $\frac{k}{4}$ red points were sampled from the remaining points on the other side of the line.
 
-Thus the error probability will not be more than the probability of getting more than $\frac{k}{4}$ tails in $\frac{k}{2}$ tosses of a biased coin having probability of head as $\frac{3}{4}$.
+So, we know that less than $\frac{n}{4}$ red points are on one side, let there be $\frac{n}{4} - x$ points, error event is the union of $\binom{\frac{n}{4} - x}{\frac{k}{4}}$ combinations for all $x \in \{1,...,\frac{n}{4} - \frac{k}{4}\}$ which is same as the probability of getting more than $\frac{k}{4}$ tails in $\frac{k}{2}$ tosses of a biased coin having probability of head as $\frac{3}{4}$.
 
 Thus,
 $$P[\text{error}] \leq 2*P[\text{more than } \frac{k}{4} \text{ tails occur in } \frac{k}{2} \text{ tosses}]$$
