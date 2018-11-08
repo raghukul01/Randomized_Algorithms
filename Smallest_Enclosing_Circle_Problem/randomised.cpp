@@ -80,7 +80,8 @@ void get_valid_circle(int x, int y) {
 }
 
 leda::circle build_circle(int index,int p_i){
-	if(build_circle(index-1,p_i).outside(P[index])){
+	leda::circle C = build_circle(index-1,p_i);
+	if(C.outside(P[index])){
 		get_valid_circle(index,p_i);
 		if(defining_points[2] == -1) {
 			leda::point center(
@@ -96,7 +97,7 @@ leda::circle build_circle(int index,int p_i){
 			return smallest_circle;
 		}
 	}
-	return build_circle(index-1,p_i);
+	return C;
 }
 
 void print(){
