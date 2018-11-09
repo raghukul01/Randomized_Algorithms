@@ -49,6 +49,7 @@ long double check_three_points() {
 }
 
 int main() {
+
 	cout.precision(17);
 	cin >> n;
 	int x, y;
@@ -57,10 +58,12 @@ int main() {
 		leda::point p(x, y);
 		P.push_back(p);
 	}
+
 	if(n > 1)
 		min_rad = min(min_rad, check_two_points());
 	if(n > 2)
 		min_rad = min(min_rad,check_three_points());
+	cout << check_three_points() << endl;
 	if(min_rad == inf) {
 		cout << "No circle possible\n";
 	}

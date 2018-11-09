@@ -3,15 +3,16 @@
 #include <LEDA/geo/point.h>
 using namespace std;
 #define inf 1e18 
+#define right_angle acos(0)
 
 int n;
 vector<leda::point> P;
 long double min_rad = inf;
 vector<int> defining_points(3, 0);
 
-bool is_valid_circle(leda::circle C,int n) {
+bool is_valid_circle(leda::circle C,int q) {
 	bool v = true;
-	for(int i = 0;i < n;i++)
+	for(int i = 0;i < q;i++)
 		if(C.outside(P[i]))
 			v = false;
 	return v;
@@ -80,6 +81,13 @@ void get_valid_circle(int x, int y) {
 }
 
 leda::circle build_circle(int index,int p_i){
+	if(index == 0) {
+		leda::point c((P[index].xcoord() + P[p_i].xcoord()) / 2.0, (P[index].ycoord() + P[p_i].ycoord()) / 2.0);
+		leda::circle C(c, P[index]);
+		defining_points[0] = index; defining_points[1] = p_i;
+		defining_points[2] = -1;
+		return C;
+	}
 	leda::circle C = build_circle(index-1,p_i);
 	if(C.outside(P[index])){
 		get_valid_circle(index,p_i);
@@ -126,6 +134,7 @@ void print(){
 }
 
 int main() {
+	cout.precision(17);
 	cin >> n;
 	int x, y;
 	for(int i = 0;i < n;i++) {
@@ -133,14 +142,17 @@ int main() {
 		leda::point p(x, y);
 		P.push_back(p);
 	}
-	two_points[0] = P[0];
-	two_points[1] = P[1];
+	// TODO randomize input
 	leda::point center(
-		(P[two_points[0]].xcoord() + P[two_points[1]].xcoord()) / 2.0,
-		(P[two_points[0]].ycoord() + P[two_points[1]].ycoord()) / 2.0);
-	leda::circle C(center, P[two_points[0]]);
+		(P[0].xcoord() + P[1].xcoord()) / 2.0,
+		(P[0].ycoord() + P[1].ycoord()) / 2.0);
+	leda::circle C(center, P[1]);
+	for(int i = 0;i < 2;i++)
+		defining_points[i] = i;
+	defining_points[2] = -1;
 	for(int i=2;i<n;i++){
 		if(C.outside(P[i])){
+			cout << i << ": outside\n";
 			C = build_circle(i-1,i);
 		}
 	}
