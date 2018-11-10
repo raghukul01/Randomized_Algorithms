@@ -1,7 +1,8 @@
 import math
 import matplotlib.pyplot as plt
 
-f1 = open("point.txt", "r")
+fname = 'dataset/test'
+f1 = open(fname, "r")
 temp = map(int, f1.read().split())
 N = temp[0]
 Px = []
@@ -17,11 +18,16 @@ temp = map(float, f2.read().split())
 X, Y = temp[0], temp[1]
 R = temp[2]
 C = [X, Y]
+
 C1 = plt.Circle(C, R, color='blue', fill=False)
 
 fig, ax = plt.subplots()
 ax.plot(Px, Py, "ro")
+ax.axis('scaled')
 ax.add_artist(C1)
-ax.set_xlim(C[0]-R-1, C[0]+R+1)
-ax.set_ylim(C[1]-R-1, C[1]+R+1)
+W = max(C[0]+R+1, C[1]+R+1)
+Q = min(C[0]-R-1,C[1]-R-1 )
+ax.set_xlim(Q, W)
+ax.set_ylim(Q, W)
+# ax.gca().set_aspect('equal', adjustable='box')
 plt.show()

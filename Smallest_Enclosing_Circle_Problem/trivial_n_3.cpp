@@ -5,27 +5,38 @@
 using namespace std;
 #define inf 1e18 
 #define right_angle acos(0)
+#define eps 1e-6
 
+// correct the angle thing
 int n;
 vector<leda::point> P;
 long double min_rad = inf;
 vector<int> defining_points(3, 0);
 
+bool outside(leda::circle C, leda::point P) {
+	leda::point Q = C.center();
+	long double r = C.radius(), d = (long double)(Q.distance(P));
+	if((r + eps - d) > 0.0)
+		return false;
+	return true;
+}
+
 bool is_valid_circle(leda::circle C) {
 	bool v = true;
 	for(int i = 0;i < n;i++)
-		if(C.outside(P[i]))
+		if(outside(C, P[i])){
 			v = false;
+		}
 	return v;
 }
 
 int just_less_than(int x, int y) {
-	long double mx = 0.0, curr_angle;
+	long double mx = right_angle, curr_angle;
 	int res = -1;
 	for(int i = 0;i < n;i++) {
 		if(i != x && i != y) {
 			curr_angle = abs(P[i].angle(P[x], P[y]));
-			if(curr_angle > mx && curr_angle <= right_angle) {
+			if(curr_angle < mx && curr_angle <= right_angle) {
 				mx = curr_angle;
 				res = i;
 			}
@@ -55,27 +66,36 @@ void get_valid_circle(int x, int y) {
 	leda::point center((a.xcoord() + b.xcoord()) / 2.0, (a.ycoord() + b.ycoord()) / 2.0);
 	leda::circle C1(center, P[x]);
 	if(is_valid_circle(C1)) {
+		long double rad = min_rad;
 		min_rad = min(min_rad, (long double)C1.radius());
-		defining_points[0] = x, defining_points[1] = y;
-		defining_points[2] = -1;
+		if(min_rad < rad){
+			defining_points[0] = x, defining_points[1] = y;
+			defining_points[2] = -1;
+		}
 	}
 	// get circle with just greater than 90, and just less than 90;
 	int z1 = just_greater_than(x, y);
 	if(z1 > 0) {
 		leda::circle C2(P[x], P[y], P[z1]);
 		if(is_valid_circle(C2)) {
+			long double rad = min_rad;
 			min_rad = min(min_rad, (long double)C2.radius());
-			defining_points[0] = x, defining_points[1] = y;
-			defining_points[2] = z1;
+			if(min_rad < rad){
+				defining_points[0] = x, defining_points[1] = y;
+				defining_points[2] = z1;
+			}
 		}
 	}
 	int z2 = just_less_than(x, y);
 	if(z2 > 0) {
 		leda::circle C3(P[x], P[y], P[z2]);
 		if(is_valid_circle(C3)) {
+			long double rad = min_rad;
 			min_rad = min(min_rad, (long double)C3.radius());
-			defining_points[0] = x, defining_points[1] = y;
-			defining_points[2] = z2;
+			if(min_rad < rad){
+				defining_points[0] = x, defining_points[1] = y;
+				defining_points[2] = z2;
+			}
 		}
 	}
 	return;

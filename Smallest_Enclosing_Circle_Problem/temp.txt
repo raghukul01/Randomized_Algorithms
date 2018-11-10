@@ -1,0 +1,3 @@
+leda::point P(324234,53453436),Q(32423,343242),R(423534656,7876978);
+leda::circle C(P,Q,R);
+cout << C.outside(Q) << endl;

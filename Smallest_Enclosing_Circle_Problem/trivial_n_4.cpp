@@ -3,17 +3,27 @@
 #include <LEDA/geo/point.h>
 using namespace std;
 #define inf 1e18 
+#define eps 1e-6
 
 int n;
 vector<leda::point> P;
 long double min_rad = inf;
 vector<int> two_points(2, 0), three_points(3, 0);
 
+bool outside(leda::circle C, leda::point P) {
+	leda::point Q = C.center();
+	long double r = C.radius(), d = (long double)(Q.distance(P));
+	if((r + eps - d) > 0.0)
+		return false;
+	return true;
+}
+
 bool is_valid_circle(leda::circle C) {
 	bool v = true;
 	for(int i = 0;i < n;i++)
-		if(C.outside(P[i]))
+		if(outside(C, P[i])){
 			v = false;
+		}
 	return v;
 }
 
@@ -24,9 +34,12 @@ long double check_two_points() {
 			leda::point center((P[i].xcoord() + P[j].xcoord())/2.0,(P[i].ycoord() + P[j].ycoord())/2.0);
 			leda::circle C(center, P[i]);
 			if(is_valid_circle(C)) {
-				r = min(r, (long double)C.radius());
-				two_points[0] = i;
-				two_points[1] = j;
+				long double rad = r;
+				r = min(rad, (long double)C.radius());
+				if(r<rad){
+					two_points[0] = i;
+					two_points[1] = j;
+				}
 			}
 		}
 	return r;
@@ -39,17 +52,19 @@ long double check_three_points() {
 			for(int k = j+1;k < n;k++) {
 				leda::circle C(P[i], P[j], P[k]);
 				if(is_valid_circle(C)) {
-					r = min(r, (long double)C.radius());
-					three_points[0] = i;
-					three_points[1] = j;
-					three_points[2] = k;
+					long double rad = r;
+					r = min(rad, (long double)C.radius());
+					if(r<rad){
+						three_points[0] = i;
+						three_points[1] = j;
+						three_points[2] = k;
+					}
 				}
 			}
 	return r;
 }
 
 int main() {
-
 	cout.precision(17);
 	cin >> n;
 	int x, y;
@@ -63,7 +78,6 @@ int main() {
 		min_rad = min(min_rad, check_two_points());
 	if(n > 2)
 		min_rad = min(min_rad,check_three_points());
-	cout << check_three_points() << endl;
 	if(min_rad == inf) {
 		cout << "No circle possible\n";
 	}
