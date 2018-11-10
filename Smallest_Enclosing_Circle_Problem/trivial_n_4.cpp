@@ -89,7 +89,7 @@ int main() {
 		cout << "Minimum radius enclosing circle is formed by 2 diametrical end, given by\n";
 		cout << "Point A: " << P[two_points[0]] << endl;
 		cout << "Point B: " << P[two_points[1]] << endl;
-		cout << "Center of Cirlce: " << smallest_circle.center() << endl;
+		cout << "Center of Circle: " << smallest_circle.center() << endl;
 		cout << "Radius of Circle: " << smallest_circle.radius() << endl;
 	}
 	else {
@@ -98,7 +98,7 @@ int main() {
 		cout << "Point A: " << P[three_points[0]] << endl;
 		cout << "Point B: " << P[three_points[1]] << endl;
 		cout << "Point C: " << P[three_points[2]] << endl;
-		cout << "Center of Cirlce: " << smallest_circle.center() << endl;
+		cout << "Center of Circle: " << smallest_circle.center() << endl;
 		cout << "Radius of Circle: " << smallest_circle.radius() << endl;
 	}
 	return 0;
