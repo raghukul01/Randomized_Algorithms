@@ -176,7 +176,6 @@ int main() {
 			C = build_circle(i-1,i);
 		}
 	}
-	cout << C.radius() << endl;
 	print();
 	return 0;
 }
