@@ -73,7 +73,6 @@ void get_valid_circle(int x, int y) {
 			defining_points[2] = -1;
 		}
 	}
-	// get circle with just greater than 90, and just less than 90;
 	int z1 = just_greater_than(x, y);
 	if(z1 > 0) {
 		leda::circle C2(P[x], P[y], P[z1]);

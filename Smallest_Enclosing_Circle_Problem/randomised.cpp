@@ -71,7 +71,6 @@ void get_valid_circle(int x, int y) {
 			defining_points[2] = -1;
 		}
 	}
-	// get circle with just greater than 90, and just less than 90;
 	int z1 = just_greater_than(x, y);
 	if(z1 > 0) {
 		leda::circle C2(P[x], P[y], P[z1]);
@@ -129,7 +128,6 @@ leda::circle build_circle(int index,int p_i){
 }
 
 void print(){
-
 	if(defining_points[2] == -1) {
 		leda::point center(
 			(P[defining_points[0]].xcoord() + P[defining_points[1]].xcoord()) / 2.0,
@@ -177,5 +175,6 @@ int main() {
 		}
 	}
 	print();
+	cout << is_valid_circle(C,n-1) << endl;
 	return 0;
 }
