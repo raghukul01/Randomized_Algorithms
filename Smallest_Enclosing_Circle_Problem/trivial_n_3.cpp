@@ -7,7 +7,6 @@ using namespace std;
 #define right_angle acos(0)
 #define eps 1e-6
 
-// correct the angle thing
 int n;
 vector<leda::point> P;
 long double min_rad = inf;
