@@ -4,7 +4,8 @@
 using namespace std;
 #define inf 1e18 
 #define right_angle acos(0)
-#define eps 1e-6
+#define eps 1e-8
+long double factor = 180.0/(2*right_angle);
 
 int n;
 vector<leda::point> P;
@@ -28,12 +29,17 @@ bool is_valid_circle(leda::circle C,int q) {
 }
 
 int just_less_than(int x, int y) {
-	long double mx = right_angle, curr_angle;
+	long double mx = right_angle*factor;
+	long double curr_angle = 0.0;
 	int res = -1;
 	for(int i = 0;i < x;i++) {
 		if(i != x && i != y) {
-			curr_angle = abs(P[i].angle(P[x], P[y]));
-			if(curr_angle < mx && curr_angle <= right_angle) {
+			curr_angle = abs(P[i].angle(P[y], P[x]));
+			curr_angle = curr_angle*factor;
+			long double temp = abs(P[i].angle(P[x], P[y]));
+			temp = temp*factor;
+			curr_angle = min(curr_angle,temp);
+			if(curr_angle < mx && curr_angle <= right_angle*factor) {
 				mx = curr_angle;
 				res = i;
 			}
@@ -57,7 +63,7 @@ void get_valid_circle(int x, int y) {
 		}
 	}
 	int z2 = just_less_than(x, y);
-	if(z2 > 0) {
+	if(z2 >= 0) {
 		leda::circle C3(P[x], P[y], P[z2]);
 		if(is_valid_circle(C3,x-1)) {
 			long double rad = min_rad;
@@ -106,22 +112,22 @@ void print(){
 			(P[defining_points[0]].xcoord() + P[defining_points[1]].xcoord()) / 2.0,
 			(P[defining_points[0]].ycoord() + P[defining_points[1]].ycoord()) / 2.0);
 		leda::circle smallest_circle(center, P[defining_points[0]]);
-		// cout << "Minimum radius enclosing circle is formed by 2 diametrical end, given by\n";
-		// cout << "Point A: " << P[defining_points[0]] << endl;
-		// cout << "Point B: " << P[defining_points[1]] << endl;
-		cout << smallest_circle.center() << endl;
-		cout << smallest_circle.radius() << endl;
+		cout << "Minimum radius enclosing circle is formed by 2 diametrical end, given by\n";
+		cout << "Point A: " << P[defining_points[0]] << endl;
+		cout << "Point B: " << P[defining_points[1]] << endl;
+		cout << "Center of Circle: " << smallest_circle.center() << endl;
+		cout << "Radius of Circle: " << smallest_circle.radius() << endl;
 	}
 	else {
 		leda::circle smallest_circle(P[defining_points[0]], 
 									 P[defining_points[1]], 
 									 P[defining_points[2]]);
-		// cout << "Minimum radius enclosing circle is formed by 3 points, given by\n";
-		// cout << "Point A: " << P[defining_points[0]] << endl;
-		// cout << "Point B: " << P[defining_points[1]] << endl;
-		// cout << "Point C: " << P[defining_points[2]] << endl;
-		cout << smallest_circle.center() << endl;
-		cout << smallest_circle.radius() << endl;
+		cout << "Minimum radius enclosing circle is formed by 3 points, given by\n";
+		cout << "Point A: " << P[defining_points[0]] << endl;
+		cout << "Point B: " << P[defining_points[1]] << endl;
+		cout << "Point C: " << P[defining_points[2]] << endl;
+		cout << "Center of Circle: " << smallest_circle.center() << endl;
+		cout << "Radius of Circle: " << smallest_circle.radius() << endl;
 	}
 }
 
