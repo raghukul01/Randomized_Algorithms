@@ -1,9 +1,7 @@
-#include "matplotlibcpp.h"
 #include <bits/stdc++.h>
 #include <LEDA/geo/circle.h>
 #include <LEDA/geo/point.h>
 using namespace std;
-namespace plt = matplotlibcpp;
 #define inf 1e18 
 #define right_angle acos(0)
 #define eps 1e-8
@@ -109,33 +107,33 @@ leda::circle build_circle(int index,int p_i){
 }
 
 void print(){
+	leda::point C;
 	if(defining_points[2] == -1) {
 		leda::point center(
 			(P[defining_points[0]].xcoord() + P[defining_points[1]].xcoord()) / 2.0,
 			(P[defining_points[0]].ycoord() + P[defining_points[1]].ycoord()) / 2.0);
 		leda::circle smallest_circle(center, P[defining_points[0]]);
-		// cout << "Minimum radius enclosing circle is formed by 2 diametrical end, given by\n";
-		// cout << "Point A: " << P[defining_points[0]] << endl;
-		// cout << "Point B: " << P[defining_points[1]] << endl;
-		cout << smallest_circle.center() << endl;
-		cout << smallest_circle.radius() << endl;
+		C = smallest_circle.center();
+		cout << C.xcoord() << " " << C.ycoord() << " " << smallest_circle.radius() << endl;
 	}
 	else {
 		leda::circle smallest_circle(P[defining_points[0]], 
 									 P[defining_points[1]], 
 									 P[defining_points[2]]);
-		// cout << "Minimum radius enclosing circle is formed by 3 points, given by\n";
-		// cout << "Point A: " << P[defining_points[0]] << endl;
-		// cout << "Point B: " << P[defining_points[1]] << endl;
-		// cout << "Point C: " << P[defining_points[2]] << endl;
-		cout << smallest_circle.center() << endl;
-		cout << smallest_circle.radius() << endl;
+		C = smallest_circle.center();
+		cout << C.xcoord() << " " << C.ycoord() << " " << smallest_circle.radius() << endl;
 	}
 }
 
+void print_circle(leda::circle C) {
+	leda::point p = C.center();
+	cout << p.xcoord() << " " << p.ycoord() << " " << C.radius() << endl;
+}
+
 int main() {
+	freopen("circle", "w", stdout);
 	clock_t begin = clock();
-	cout.precision(7);
+	cout.precision(17);
 	cin >> n;
 	int x, y;
 	for(int i = 0;i < n;i++) {
@@ -143,22 +141,22 @@ int main() {
 		leda::point p(x, y);
 		P.push_back(p);
 	}
-	random_shuffle(P.begin(),P.end());
+	// random_shuffle(P.begin(),P.end());
 	leda::point center(
 		(P[0].xcoord() + P[1].xcoord()) / 2.0,
 		(P[0].ycoord() + P[1].ycoord()) / 2.0);
+	cout << "0 0 0\n";
 	leda::circle C(center, P[1]);
 	for(int i = 0;i < 2;i++)
 		defining_points[i] = i;
 	defining_points[2] = -1;
+	// cout << 
 	for(int i=2;i<n;i++){
+		print_circle(C);
 		if(outside(C,P[i])){
 			C = build_circle(i-1,i);
 		}
 	}
-	// // print();
-	// clock_t end = clock();
-	// double elapsed_secs = (long double)(end - begin) / CLOCKS_PER_SEC;
-	// cout << elapsed_secs*1000 << endl;
+	print_circle(C);
 	return 0;
 }
