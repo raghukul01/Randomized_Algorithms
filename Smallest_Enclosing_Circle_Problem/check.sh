@@ -2,7 +2,7 @@
 
 N=10
 M=$1
-LEDAROOT="/home/raghukul/github/CS648/Smallest_Enclosing_Circle_Problem/LEDA"
+LEDAROOT="$(pwd)/LEDA"
 export LEDAROOT
 LD_LIBRARY_PATH=$LEDAROOT
 export LD_LIBRARY_PATH
