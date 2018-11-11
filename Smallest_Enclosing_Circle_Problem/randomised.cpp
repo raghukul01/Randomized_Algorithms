@@ -132,7 +132,8 @@ void print(){
 }
 
 int main() {
-	cout.precision(7);
+	clock_t begin = clock();
+	cout.precision(17);
 	cin >> n;
 	int x, y;
 	for(int i = 0;i < n;i++) {
@@ -153,6 +154,9 @@ int main() {
 			C = build_circle(i-1,i);
 		}
 	}
-	print();
+	// print();
+	clock_t end = clock();
+	double elapsed_secs = (long double)(end - begin) / CLOCKS_PER_SEC;
+	cout << elapsed_secs*1000 << endl;
 	return 0;
 }

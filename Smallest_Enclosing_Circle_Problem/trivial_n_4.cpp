@@ -65,7 +65,8 @@ long double check_three_points() {
 }
 
 int main() {
-	cout.precision(7);
+	clock_t begin = clock();
+	cout.precision(17);
 	cin >> n;
 	int x, y;
 	for(int i = 0;i < n;i++) {
@@ -78,28 +79,31 @@ int main() {
 		min_rad = min(min_rad, check_two_points());
 	if(n > 2)
 		min_rad = min(min_rad,check_three_points());
-	if(min_rad == inf) {
-		cout << "No circle possible\n";
-	}
-	else if(min_rad == check_two_points()) {
-		leda::point center(
-			(P[two_points[0]].xcoord() + P[two_points[1]].xcoord()) / 2.0,
-			(P[two_points[0]].ycoord() + P[two_points[1]].ycoord()) / 2.0);
-		leda::circle smallest_circle(center, P[two_points[0]]);
-		// cout << "Minimum radius enclosing circle is formed by 2 diametrical end, given by\n";
-		// cout << "Point A: " << P[two_points[0]] << endl;
-		// cout << "Point B: " << P[two_points[1]] << endl;
-		cout << smallest_circle.center() << endl;
-		cout << smallest_circle.radius() << endl;
-	}
-	else {
-		leda::circle smallest_circle(P[three_points[0]], P[three_points[1]], P[three_points[2]]);
-		// cout << "Minimum radius enclosing circle is formed by 3 points, given by\n";
-		// cout << "Point A: " << P[three_points[0]] << endl;
-		// cout << "Point B: " << P[three_points[1]] << endl;
-		// cout << "Point C: " << P[three_points[2]] << endl;
-		cout << smallest_circle.center() << endl;
-		cout << smallest_circle.radius() << endl;
-	}
+	// if(min_rad == inf) {
+	// 	cout << "No circle possible\n";
+	// }
+	// else if(min_rad == check_two_points()) {
+	// 	leda::point center(
+	// 		(P[two_points[0]].xcoord() + P[two_points[1]].xcoord()) / 2.0,
+	// 		(P[two_points[0]].ycoord() + P[two_points[1]].ycoord()) / 2.0);
+	// 	leda::circle smallest_circle(center, P[two_points[0]]);
+	// 	// cout << "Minimum radius enclosing circle is formed by 2 diametrical end, given by\n";
+	// 	// cout << "Point A: " << P[two_points[0]] << endl;
+	// 	// cout << "Point B: " << P[two_points[1]] << endl;
+	// 	cout << smallest_circle.center() << endl;
+	// 	cout << smallest_circle.radius() << endl;
+	// }
+	// else {
+	// 	leda::circle smallest_circle(P[three_points[0]], P[three_points[1]], P[three_points[2]]);
+	// 	// cout << "Minimum radius enclosing circle is formed by 3 points, given by\n";
+	// 	// cout << "Point A: " << P[three_points[0]] << endl;
+	// 	// cout << "Point B: " << P[three_points[1]] << endl;
+	// 	// cout << "Point C: " << P[three_points[2]] << endl;
+	// 	cout << smallest_circle.center() << endl;
+	// 	cout << smallest_circle.radius() << endl;
+	// }
+	clock_t end = clock();
+	double elapsed_secs =(long double)(end - begin) / CLOCKS_PER_SEC;
+	cout << elapsed_secs*1000 << endl;
 	return 0;
 }
