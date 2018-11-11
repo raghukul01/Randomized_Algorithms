@@ -1,6 +1,6 @@
 #!/bin/bash
 
-N=10
+N=60
 M=$1
 LEDAROOT="$(pwd)/LEDA"
 export LEDAROOT

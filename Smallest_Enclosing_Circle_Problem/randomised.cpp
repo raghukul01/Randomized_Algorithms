@@ -1,7 +1,9 @@
+#include "matplotlibcpp.h"
 #include <bits/stdc++.h>
 #include <LEDA/geo/circle.h>
 #include <LEDA/geo/point.h>
 using namespace std;
+namespace plt = matplotlibcpp;
 #define inf 1e18 
 #define right_angle acos(0)
 #define eps 1e-8
