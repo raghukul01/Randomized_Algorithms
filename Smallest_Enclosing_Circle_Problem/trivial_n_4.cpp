@@ -65,7 +65,7 @@ long double check_three_points() {
 }
 
 int main() {
-	cout.precision(17);
+	cout.precision(7);
 	cin >> n;
 	int x, y;
 	for(int i = 0;i < n;i++) {
