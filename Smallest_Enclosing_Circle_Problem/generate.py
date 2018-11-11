@@ -4,10 +4,10 @@ tmp = sys.argv[1:]
 
 from random import randint as rint
 N = int(tmp[0])
-Xmin = -rint(1, N*100)
-Xmax = rint(1,N*100)
-Ymin = -rint(1,N*100)
-Ymax = rint(1,N*100)
+Xmin = -rint(1, N)
+Xmax = rint(1,N)
+Ymin = -rint(1,N)
+Ymax = rint(1,N)
  
 filename = "test"
 f = open(filename, "w+")
