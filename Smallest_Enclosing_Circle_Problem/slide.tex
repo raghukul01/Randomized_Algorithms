@@ -19,7 +19,6 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{algorithm2e}
-\usepackage{movie15}
 \lstset
 {
     language=[LaTeX]TeX,
@@ -325,12 +324,59 @@ So the third defining point(if any) is the point which form the least acute angl
  \\ \hline
 1000000 & 1786.539 & 3346.28 & find out!!
  \\ \hline
+ 10000000 & find out!! & find out!! & find out!!
+ \\ \hline
 \end{tabular}
 \caption{All the values given above are in ms. Tested over $50$ randomly generated examples for each $N$.}\end{table}
 \end{frame}
 
-\begin{frame}
-\includemovie{1cm}{1cm}{./gifs/100pts.gif}
+\begin{frame}{Experimental Results}
+\textbf{Number of time new point lies outside current circle.}
+\begin{table}
+\centering
+\begin{tabular}{|c| c|} 
+ \hline\hline
+ $N$ & no. of times oint lies outside (Avg value) \\ [0.5ex] 
+ \hline\hline
+10 & 3.235
+ \\ \hline
+100 & 8.843
+ \\ \hline
+1000 & 15.118
+ \\ \hline
+10000 & 21.059
+ \\ \hline
+100000 & 26.189
+ \\ \hline
+1000000 & find out!!
+ \\ \hline
+1000000 & find out!!
+ \\ \hline
+\end{tabular}
+\caption{Tested over $50$ randomly generated examples for each $N$.}\end{table}
+\end{frame}
+
+
+\begin{frame}{Experimental Results}
+\textbf{Percentage exceeding Average run time.}
+\begin{table}
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|c| c| c | c | c | c | c |} 
+ \hline\hline
+ Average time exceeded by(\%) & 10 & 100 & 1000 & 10000 & 100000 & 1000000 \\ [0.5ex] 
+ \hline\hline
+10 & 20.332 & 30.290 & 35.269 & 33.195 & find out!!& find out!! 
+ \\ \hline
+20 & 12.863 & 22.821 & 26.556 & 25.726 & find out!!& find out!!
+ \\ \hline
+50 & 1.659 & 2.905 & 9.128 & 11.618 &  find out!!&find out!!
+ \\ \hline
+100 & 0 &  1.1 & 2.489 & 4.979 & find out!!&find out!!
+ \\ \hline
+\end{tabular}
+}
+\caption{Tested over $250$ randomly generated examples for each $N$.}\end{table}
 \end{frame}
 
 \end{document}

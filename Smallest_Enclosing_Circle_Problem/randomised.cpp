@@ -158,6 +158,9 @@ int main() {
 		}
 	}
 	// print_circle(C);
-	cout << cnt << endl;
+	// cout << cnt << endl;
+	clock_t end = clock();
+	double elapsed_secs = (long double)(end - begin) / CLOCKS_PER_SEC;
+	cout << elapsed_secs*1000 << endl;
 	return 0;
 }

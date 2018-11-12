@@ -1,6 +1,7 @@
 import sys
 
 filename = ["./out/rand_out"]
+percent = [1.1, 1.2, 1.5, 2]
 for file in filename:
 	f = open(file)
 	tmp = list(map(float, f.read().split()))
@@ -14,11 +15,10 @@ for file in filename:
 		mx = max(mx, tmp[i])
 		mn = min(mn, tmp[i])
 	avg = sm / N
-	sd = 0
-	for i in range(N):
-		tmp[i] -= avg
-		sd += tmp[i]*tmp[i]
-
-	sd /= N
-	sd = sd**0.5
-	print avg, mx, mn, sd
+	for i in range(4):
+		percent[i] *= avg
+		cnt = 0
+		for j in range(N):
+			if tmp[j] > percent[i]:
+				cnt+=1
+		print cnt / float(N) *100, 
