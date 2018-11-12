@@ -78,29 +78,27 @@ void get_valid_circle(int x, int y) {
 }
 
 leda::circle build_circle(int index,int p_i){
-	if(index == 0) {
-		leda::point c((P[index].xcoord() + P[p_i].xcoord()) / 2.0, (P[index].ycoord() + P[p_i].ycoord()) / 2.0);
-		leda::circle C(c, P[index]);
-		defining_points[0] = index; 
-		defining_points[1] = p_i;
-		defining_points[2] = -1;
-		return C;
-	}
-	leda::circle C = build_circle(index-1,p_i);
-	if(outside(C,P[index])){
-		get_valid_circle(index,p_i);
-		if(defining_points[2] == -1) {
-			leda::point center(
-				(P[defining_points[0]].xcoord() + P[defining_points[1]].xcoord()) / 2.0,
-				(P[defining_points[0]].ycoord() + P[defining_points[1]].ycoord()) / 2.0);
-			leda::circle smallest_circle(center, P[defining_points[0]]);
-			return smallest_circle;
-		}
-		else {
-			leda::circle smallest_circle(P[defining_points[0]], 
-										 P[defining_points[1]], 
-										 P[defining_points[2]]);
-			return smallest_circle;
+	leda::point c((P[0].xcoord() + P[p_i].xcoord()) / 2.0, (P[0].ycoord() + P[p_i].ycoord()) / 2.0);
+	leda::circle C(c,P[0]);
+	defining_points[0] = 0; 
+	defining_points[1] = p_i;
+	defining_points[2] = -1;
+	for(int i=1;i<=index;i++){
+		if(outside(C,P[i])){
+			get_valid_circle(i,p_i);
+			if(defining_points[2] == -1) {
+				leda::point center(
+					(P[defining_points[0]].xcoord() + P[defining_points[1]].xcoord()) / 2.0,
+					(P[defining_points[0]].ycoord() + P[defining_points[1]].ycoord()) / 2.0);
+				leda::circle smallest_circle(center, P[defining_points[0]]);
+				C = smallest_circle;
+			}
+			else {
+				leda::circle smallest_circle(P[defining_points[0]], 
+											 P[defining_points[1]], 
+											 P[defining_points[2]]);
+				C = smallest_circle;
+			}
 		}
 	}
 	return C;
@@ -149,7 +147,6 @@ int main() {
 	for(int i = 0;i < 2;i++)
 		defining_points[i] = i;
 	defining_points[2] = -1;
-	// cout << 
 	int cnt = 0;
 	for(int i=2;i<n;i++){
 		if(outside(C,P[i])){

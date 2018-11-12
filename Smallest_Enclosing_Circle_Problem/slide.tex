@@ -76,47 +76,13 @@
       \item This algorithm can be easily modified to give a deterministic algorithm with $O(n^3)$ time complexity.
       \pause
       \item The idea is that given two defining points we can find the third defining point in $O(n)$ time.
+      
       \pause
-      \item Find the following points-
-      \begin{itemize}
-          \item The point which form the smallest acute angle with the given points.
-          \item The point which form the smallest obtuse angle with the given points.
-      \end{itemize}
-      \pause
-      \item Check whether these three circles(one constructed taking these 2 points as diameteric ends) are valid and return the smallest radius circle enclosing these points.
+      \item Check whether these two circles(one constructed taking the 2 defining points as diameteric ends) are valid and return the smallest radius circle enclosing these points.
   \end{itemize}
 \end{frame}
 
 \section{Algorithm and Proofs}
-
-
-\begin{frame}{Lemma 1}
-If a point $P$ is outside the smallest enclosing circle of set $S$ then it must be one of the defining points of smallest enclosing circle of set $S\cup P$.
-\pause
-\\
-\textbf{Proof : } Note that there has to to atleast 2 point on the circle. If not then we can compress the circle, so that there are atleast 2 points on the circle. Also the boundary points define the circle completely, if not, then again we can compress the circle. Suppose $P$ is not a defining point, by above statement there are some defining point on this new circle. These defining points were present before $P$ was added, so the radius of circle was atleast equal to the radius of circle defined by these points. After adding $P$ they are defining point, so the radius of this equal to the radius defined by these point. In other words the circle didn't change, after adding $P$. But this contradicts our assumption that $P$ is outside the smallest enclosing circle.
-% \pause
-\end{frame}
-
-\begin{frame}{Lemma 2}
-Probability that point $P_i$ lies outside the smallest enclosing circle of points $P_1, ... , P_{i-1}$ is $\leq \frac{3}{i}$.
-\pause
-\\
-\textbf{Proof : } By Lemma 1, if the smallest enclosing circle is changed on adding the $i^{th}$ point then it must be one of the defining points of smallest enclosing circle of first $i$ points, call this circle $C_i$.
-\\
-\pause
-There can be at most $3$ defining points for $C_i$ because $C_{i-1}$ is not same as $C_i$, so the proability that $i^{th}$ point is defining point for $C_i$ is $\leq \frac{3}{i}$.
-
-\end{frame}
-\begin{frame}{Lemma 3}
- Given two defining points then the third defining point is the point which form the least acute angle with these two points.
-\pause
-\\
-\textbf{Proof : } The angle subtended by a chord on the boundary of the circle is least compared to all other points in the same sector and for a point to be the defining point it must lie on the boundary.
-\\
-\pause
-So the third defining point(if any) is the point which form the least acute angle with these two points.    
-\end{frame}
 
 \begin{frame}{$O(n^4)$ algorithm}
 \scalebox{0.8}{
@@ -215,11 +181,9 @@ So the third defining point(if any) is the point which form the least acute angl
     \tcc*[f]{Now we know that $P_k$ is also defining point}\\
     $l \leftarrow$ line joining $P[k], P_d$ \\
     $P_{min}$ = point($[1,k-1]$) subtending least acute angle on $l$\\
-    $P_{max}$ = point($[1,k-1]$) subtending least obtuse angle on $l$\\
     $C_{1} \leftarrow$ circle formed by taking $P[i], P[j]$ as diametric ends. \\
     $C_{2} \leftarrow$ circumcircle of $P[i], P[j], P_{min}$. \\
-    $C_{3} \leftarrow$ circumcircle of $P[i], P[j], P_{max}$. \\
-    $C^{'} \leftarrow$ circle among $C_1, C_2, C_3$ having least radius. \\
+    $C^{'} \leftarrow$ circle among $C_1, C_2$ having least radius. \\
     \Return{$C^{'}$}
   }
 \end{algorithm}
@@ -227,10 +191,43 @@ So the third defining point(if any) is the point which form the least acute angl
     }
 \end{frame}
 
+\begin{frame}{Lemma 1}
+If a point $P$ is outside the smallest enclosing circle of set $S$ then it must be one of the defining points of smallest enclosing circle of set $S\cup \{P\}$.
+\pause
+\\
+\textbf{Proof : } Note that there has to to at least 2 point on the circle. If not then we can compress the circle, so that there are at least 2 points on the circle.\\
+\pause
+Also the boundary points define the circle completely, if not, then again we can compress the circle. Suppose $P$ is not a defining point, by above statement there are some defining point on this new circle. These defining points were present before $P$ was added, so the radius of circle was at least equal to the radius of circle defined by these points. After adding $P$ they are defining point, so the radius of this equal to the radius defined by these point. In other words the circle didn't change, after adding $P$. But this contradicts our assumption that $P$ is outside the smallest enclosing circle.
+% \pause
+\end{frame}
+
+\begin{frame}{Lemma 2}
+Probability that point $P_i$ lies outside the smallest enclosing circle of points $P_1, ... , P_{i-1}$ is $\leq \frac{3}{i}$.
+\pause
+\\
+\textbf{Proof : } By Lemma 1, if the smallest enclosing circle is changed on adding the $i^{th}$ point then it must be one of the defining points of smallest enclosing circle of first $i$ points, call this circle $C_i$.
+\\
+\pause
+There can be at most $3$ defining points for $C_i$ because $C_{i-1}$ is not same as $C_i$, so the proability that $i^{th}$ point is defining point for $C_i$ is $\leq \frac{3}{i}$.
+
+\end{frame}
+\begin{frame}{Lemma 3}
+ Given two defining points then the third defining point is the point which form the least acute angle with these two points.
+\pause
+\\
+\textbf{Proof : } The angle subtended by a chord on the boundary of the circle is least compared to all other points in the same sector and for a point to be the defining point it must lie on the boundary.
+\\
+\pause
+So the third defining point(if any) is the point which form the least acute angle with these two points.    
+\end{frame}
+
+\section{Analysis and Experimental results}
 
 \begin{frame}{Analysis}
 \begin{itemize}
-    \item Worst case time complexity of our randomized algorithm is $O(n^3)$. This occurs when all the points lie outside the existing circle, and while updating circle, removing $q$ does not give a defining point on every step of recursion.
+    \item Worst case time complexity of our randomized algorithm is $O(n^3)$.\\ 
+    \pause 
+    This occurs when all the points lie outside the existing circle, and while updating circle, removing $q$ does not give a defining point on every step of recursion.
     \pause
     \item Expected time complexity of our randomized algorithm is $O(n)$.
     \pause
