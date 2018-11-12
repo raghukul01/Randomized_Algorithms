@@ -131,7 +131,7 @@ void print_circle(leda::circle C) {
 }
 
 int main() {
-	freopen("circle", "w", stdout);
+	freopen("test", "r", stdin);
 	clock_t begin = clock();
 	cout.precision(17);
 	cin >> n;
@@ -145,18 +145,19 @@ int main() {
 	leda::point center(
 		(P[0].xcoord() + P[1].xcoord()) / 2.0,
 		(P[0].ycoord() + P[1].ycoord()) / 2.0);
-	cout << "0 0 0\n";
 	leda::circle C(center, P[1]);
 	for(int i = 0;i < 2;i++)
 		defining_points[i] = i;
 	defining_points[2] = -1;
 	// cout << 
+	int cnt = 0;
 	for(int i=2;i<n;i++){
-		print_circle(C);
 		if(outside(C,P[i])){
+			cnt++;
 			C = build_circle(i-1,i);
 		}
 	}
-	print_circle(C);
+	// print_circle(C);
+	cout << cnt << endl;
 	return 0;
 }

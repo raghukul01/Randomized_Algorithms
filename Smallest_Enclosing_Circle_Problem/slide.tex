@@ -1,0 +1,337 @@
+\documentclass{beamer}
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{Madrid}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{beaver} % or try albatross, beaver, crane, ...
+  \usefonttheme{serif}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+} 
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{algorithm2e}
+\usepackage{movie15}
+\lstset
+{
+    language=[LaTeX]TeX,
+    breaklines=true,
+    basicstyle=\tt\scriptsize,
+    %commentstyle=\color{green}
+    keywordstyle=\color{blue},
+    %stringstyle=\color{black}
+    identifierstyle=\color{magenta},
+}
+
+\title[CS648]{Smallest Enclosing Circle Problem}
+\author{Raghukul,Vibhor}
+\institute{IIT Kanpur}
+\date{\today}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Uncomment these lines for an automatically generated outline.
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}{Problem}
+  \begin{itemize}
+      \item Given $n$ points in a plane, compute the smallest radius circle enclosing all $n$ points.
+      \pause
+      \item The time complexity of best deterministic algorithm for this problem is $O(n)$ which uses advanced geometry.
+      \pause 
+      \item We will present a simple randomised algorithm for this problem with expected $O(n)$ time complexity. 
+      \pause
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ideas}
+  \begin{itemize}
+      \item A circle is completely determined if we are given three or two points lying on its boundary.
+      \pause
+      \item We can use this idea to get a trivial $O(n^4)$ deterministic algorithm for our problem.
+      \pause
+      \item This algorithm can be easily modified to give a deterministic algorithm with $O(n^3)$ time complexity.
+      \pause
+      \item The idea is that given two defining points we can find the third defining point in $O(n)$ time.
+      \pause
+      \item Find the following points-
+      \begin{itemize}
+          \item The point which form the smallest acute angle with the given points.
+          \item The point which form the smallest obtuse angle with the given points.
+      \end{itemize}
+      \pause
+      \item Check whether these three circles(one constructed taking these 2 points as diameteric ends) are valid and return the smallest radius circle enclosing these points.
+  \end{itemize}
+\end{frame}
+
+\section{Algorithm and Proofs}
+
+
+\begin{frame}{Lemma 1}
+If a point $P$ is outside the smallest enclosing circle of set $S$ then it must be one of the defining points of smallest enclosing circle of set $S\cup P$.
+\pause
+\\
+\textbf{Proof : } Note that there has to to atleast 2 point on the circle. If not then we can compress the circle, so that there are atleast 2 points on the circle. Also the boundary points define the circle completely, if not, then again we can compress the circle. Suppose $P$ is not a defining point, by above statement there are some defining point on this new circle. These defining points were present before $P$ was added, so the radius of circle was atleast equal to the radius of circle defined by these points. After adding $P$ they are defining point, so the radius of this equal to the radius defined by these point. In other words the circle didn't change, after adding $P$. But this contradicts our assumption that $P$ is outside the smallest enclosing circle.
+% \pause
+\end{frame}
+
+\begin{frame}{Lemma 2}
+Probability that point $P_i$ lies outside the smallest enclosing circle of points $P_1, ... , P_{i-1}$ is $\leq \frac{3}{i}$.
+\pause
+\\
+\textbf{Proof : } By Lemma 1, if the smallest enclosing circle is changed on adding the $i^{th}$ point then it must be one of the defining points of smallest enclosing circle of first $i$ points, call this circle $C_i$.
+\\
+\pause
+There can be at most $3$ defining points for $C_i$ because $C_{i-1}$ is not same as $C_i$, so the proability that $i^{th}$ point is defining point for $C_i$ is $\leq \frac{3}{i}$.
+
+\end{frame}
+\begin{frame}{Lemma 3}
+ Given two defining points then the third defining point is the point which form the least acute angle with these two points.
+\pause
+\\
+\textbf{Proof : } The angle subtended by a chord on the boundary of the circle is least compared to all other points in the same sector and for a point to be the defining point it must lie on the boundary.
+\\
+\pause
+So the third defining point(if any) is the point which form the least acute angle with these two points.    
+\end{frame}
+
+\begin{frame}{$O(n^4)$ algorithm}
+\scalebox{0.8}{
+    \begin{minipage}{1\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{$N$ points in $2D$ plane}
+\KwOut{Circle enclosing given $N$ points and having minimum radius}
+ $P \leftarrow$  list of $N$ points\\
+ $C \leftarrow$ circle formed by taking $P[1], P[2]$ as diameter. \\
+ \For{$i \leftarrow 1$ \KwTo $n$} {
+  \For{$j \leftarrow i+1$ \KwTo $n$} {
+    $C^{'} \leftarrow$ circle formed by taking $P[i], P[j]$ as diametric ends. \\
+    \uIf{$C^{'}.rad <$  $C.rad$}{
+      $C = C^{'}$
+    }
+  }
+ }
+ \For{$i \leftarrow 1$ \KwTo $n$} {
+  \For{$j \leftarrow i+1$ \KwTo $n$} {
+    \For{$k \leftarrow j+1$ \KwTo $n$} {
+      $C^{'} \leftarrow$ Circumcircle of $P[i], P[j], P[k]$ \\
+        \uIf{$C^{'}.rad <$  $C.rad$}{
+          $C = C^{'}$
+        }
+    }
+  }
+ }
+ \Return{$C$}
+\end{algorithm}
+\end{minipage}%
+    }
+\end{frame}
+
+
+
+\begin{frame}{$O(n^3)$ algorithm}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{$N$ points in $2D$ plane}
+\KwOut{Circle enclosing given $N$ points and having minimum radius}
+ $P \leftarrow$  list of $N$ points\\
+ $C \leftarrow$ circle formed by taking $P[1], P[2]$ as diameter. \\
+ \For{$i \leftarrow 1$ \KwTo $n$} {
+  \For{$j \leftarrow i+1$ \KwTo $n$} {
+    $P_{min}$ = point subtending least acute angle on line $P[i]\rightarrow P[j]$\\
+    $P_{max}$ = point subtending least obtuse angle on line $P[i]\rightarrow P[j]$\\
+    $C_{1} \leftarrow$ circle formed by taking $P[i], P[j]$ as diametric ends. \\
+    $C_{2} \leftarrow$ circumcircle of $P[i], P[j], P_{min}$. \\
+    $C_{3} \leftarrow$ circumcircle of $P[i], P[j], P_{max}$. \\
+    $C^{'} \leftarrow$ circle among $C_1, C_2, C_3$ having least radius. \\
+    \uIf{$C^{'}.rad <$  $C.rad$}{
+      $C = C^{'}$
+    }
+  }
+ }
+ \Return{$C$}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{Expected $O(n)$ algorithm}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{$N$ points in $2D$ plane}
+\KwOut{Circle enclosing given $N$ points and having minimum radius}
+ $P \leftarrow$  list of $N$ points\\
+ $P^{'} \leftarrow$ random permutation of $P$ \\ 
+ $C \leftarrow$ circle formed by taking $P^{'}[1], P^{'}[2]$ as diameter. \\
+ \For{$i \leftarrow 3$ \KwTo $n$} {
+    \uIf{$C.outside(P^{'}[i])$}{
+      $C \leftarrow$ build\_circle($i-1, P[i]$)
+    }
+ }
+
+ \Return{$C$}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}{build\_circle}
+\scalebox{0.85}{
+    \begin{minipage}{1\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{$k$, $P_d$}
+\KwOut{Circle enclosing first $k$ points and $P_d$ being on boundary}
+  \uIf{$k$ = 1}{
+    \Return{circle formed by taking $P[1]\rightarrow P_d$ as diameter.}
+  }
+  $C^{'} \leftarrow$ build\_circle($k-1, P_d$) \\
+  \uIf{$C^{'}.inside(P[k])$ }{
+    \Return{$C^{'}$}
+  }
+  \uElse {
+    \tcc*[f]{Now we know that $P_k$ is also defining point}\\
+    $l \leftarrow$ line joining $P[k], P_d$ \\
+    $P_{min}$ = point($[1,k-1]$) subtending least acute angle on $l$\\
+    $P_{max}$ = point($[1,k-1]$) subtending least obtuse angle on $l$\\
+    $C_{1} \leftarrow$ circle formed by taking $P[i], P[j]$ as diametric ends. \\
+    $C_{2} \leftarrow$ circumcircle of $P[i], P[j], P_{min}$. \\
+    $C_{3} \leftarrow$ circumcircle of $P[i], P[j], P_{max}$. \\
+    $C^{'} \leftarrow$ circle among $C_1, C_2, C_3$ having least radius. \\
+    \Return{$C^{'}$}
+  }
+\end{algorithm}
+\end{minipage}%
+    }
+\end{frame}
+
+
+\begin{frame}{Analysis}
+\begin{itemize}
+    \item Worst case time complexity of our randomized algorithm is $O(n^3)$. This occurs when all the points lie outside the existing circle, and while updating circle, removing $q$ does not give a defining point on every step of recursion.
+    \pause
+    \item Expected time complexity of our randomized algorithm is $O(n)$.
+    \pause
+    \begin{itemize}
+        \item The expected runtime of $build\_circle()$ function is $O(i)$.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Experimental Results}
+\textbf{Comparison between run time of the $3$ algorithms discussed.}
+\begin{table}
+\centering
+\begin{tabular}{|c| c |c |c|} 
+ \hline\hline
+ $N$ & Expected $O(n)$ algorithm & $O(n^3)$ Algorithm & $O(n^4)$ Algorithm \\ [0.5ex] 
+ \hline\hline
+10 & 0.069 & 0.186 & 0.248 \\ \hline
+20 & 0.093 & 1.112 & 3.203 \\ \hline
+30 & 0.097 & 3.395 & 14.635 \\ \hline
+40 & 0.133 & 7.888 & 44.322 \\ \hline
+50 & 0.146 & 15.107 & 105.807 \\ \hline
+60 & 0.185 & 26.222 & 219.731 \\ \hline
+70 & 0.215 & 42.041 & 408.725 \\ \hline
+80 & 0.229 & 62.511 & 695.651\\ \hline
+90 & 0.239 & 88.957 & 1109.614 \\ \hline
+100 & 0.268 & 122.576 & 1700.718\\ \hline
+\end{tabular}
+\caption{All the values given above are in ms. Tested over $50$ randomly generated examples for each $N$.}
+\label{Talbe}
+\end{table}
+\end{frame}
+
+
+\begin{frame}{Experimental Results}
+\textbf{Comparison between $O(n^3)$, $O(n)$ algorithms.}
+\begin{table}
+\centering
+\begin{tabular}{|c| c |c |} 
+ \hline\hline
+ $N$ & Expected $O(n)$ algorithm & $O(n^3)$ Algorithm \\ [0.5ex] 
+ \hline\hline
+100 & 0.269 & 121.167 \\ \hline
+200 & 0.476  & 959.231\\ \hline
+
+300 & 0.679 & 3163.430
+ \\ \hline
+
+400 & 1.052 & 7615.576
+ \\ \hline
+
+500 & 1.175 & 14999.119
+ \\ \hline
+
+600 & 1.522 & 25769.805
+ \\ \hline
+
+700 & 1.813 & 43088.605
+\\ \hline
+
+800 & 2.008 & 66676.151
+\\ \hline
+
+900 & 2.219 & 93234.026
+ \\ \hline
+
+1000 & 2.254 & 120870.487
+\\ \hline
+\end{tabular}
+\caption{All the values given above are in ms. Tested over $20$ randomly generated examples for each $N$.}
+\end{table}
+\end{frame}
+
+\begin{frame}{Experimental Results}
+\textbf{Statistics of $O(n)$ algorithm.}
+\begin{table}
+\centering
+\begin{tabular}{|c| c |c |c|} 
+ \hline\hline
+ $N$ & Average Time & Worst Case Time & Standard deviation \\ [0.5ex] 
+ \hline\hline
+10 & 0.071 & 0.097  & 0.011
+ \\ \hline
+100 & 0.303 & 0.895 & 0.149
+ \\ \hline
+1000 & 2.224 & 5.419 & 0.933
+ \\ \hline
+10000 & 22.307 & 47.068 & 8.381
+ \\ \hline
+100000 & 212.129 & 629.476 & 96.677
+ \\ \hline
+1000000 & 1786.539 & 3346.28 & find out!!
+ \\ \hline
+\end{tabular}
+\caption{All the values given above are in ms. Tested over $50$ randomly generated examples for each $N$.}\end{table}
+\end{frame}
+
+\begin{frame}
+\includemovie{1cm}{1cm}{./gifs/100pts.gif}
+\end{frame}
+
+\end{document}
+

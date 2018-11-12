@@ -1,6 +1,6 @@
 #!/bin/bash
 
-N=60
+N=10
 M=$1
 LEDAROOT="$(pwd)/LEDA"
 export LEDAROOT
@@ -15,6 +15,7 @@ until [ $N -lt 10 ];do
 	(./binaries/random < "test") >> "./out/rand_out"
 	let N-=1
 done
-rm "test"
-python compute_avg.py
+cat "./out/rand_out"
+# rm "test"
+# python compute_avg.py
 
