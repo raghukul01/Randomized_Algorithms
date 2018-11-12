@@ -21,4 +21,4 @@ for file in filename:
 		for j in range(N):
 			if tmp[j] > percent[i]:
 				cnt+=1
-		print cnt / float(N) *100, 
+		print round((cnt *100) / float(N) , 3), 

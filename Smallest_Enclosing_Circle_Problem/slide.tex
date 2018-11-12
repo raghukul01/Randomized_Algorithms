@@ -129,11 +129,9 @@
  \For{$i \leftarrow 1$ \KwTo $n$} {
   \For{$j \leftarrow i+1$ \KwTo $n$} {
     $P_{min}$ = point subtending least acute angle on line $P[i]\rightarrow P[j]$\\
-    $P_{max}$ = point subtending least obtuse angle on line $P[i]\rightarrow P[j]$\\
     $C_{1} \leftarrow$ circle formed by taking $P[i], P[j]$ as diametric ends. \\
     $C_{2} \leftarrow$ circumcircle of $P[i], P[j], P_{min}$. \\
-    $C_{3} \leftarrow$ circumcircle of $P[i], P[j], P_{max}$. \\
-    $C^{'} \leftarrow$ circle among $C_1, C_2, C_3$ having least radius. \\
+    $C^{'} \leftarrow$ circle among $C_1, C_2$ having least radius. \\
     \uIf{$C^{'}.rad <$  $C.rad$}{
       $C = C^{'}$
     }
@@ -164,31 +162,22 @@
 
 
 \begin{frame}{build\_circle}
-\scalebox{0.85}{
-    \begin{minipage}{1\linewidth}
 \begin{algorithm}[H]
 \SetAlgoLined
 \KwIn{$k$, $P_d$}
 \KwOut{Circle enclosing first $k$ points and $P_d$ being on boundary}
-  \uIf{$k$ = 1}{
-    \Return{circle formed by taking $P[1]\rightarrow P_d$ as diameter.}
-  }
-  $C^{'} \leftarrow$ build\_circle($k-1, P_d$) \\
-  \uIf{$C^{'}.inside(P[k])$ }{
-    \Return{$C^{'}$}
-  }
-  \uElse {
-    \tcc*[f]{Now we know that $P_k$ is also defining point}\\
-    $l \leftarrow$ line joining $P[k], P_d$ \\
-    $P_{min}$ = point($[1,k-1]$) subtending least acute angle on $l$\\
-    $C_{1} \leftarrow$ circle formed by taking $P[i], P[j]$ as diametric ends. \\
-    $C_{2} \leftarrow$ circumcircle of $P[i], P[j], P_{min}$. \\
-    $C^{'} \leftarrow$ circle among $C_1, C_2$ having least radius. \\
-    \Return{$C^{'}$}
-  }
-\end{algorithm}
-\end{minipage}%
+  $C \leftarrow$ circle formed by taking $P^{'}[1], P_d$ as diameter. \\
+  \For{$i \leftarrow 2$ \KwTo $k$} {
+    \uIf{$C.outside(P^{'}[i])$}{
+        $l \leftarrow$ line joining $P^{'}[i], P_d$ \\
+        $P_{min}$ = point($[1,i-1]$) subtending least acute angle on $l$\\
+        $C_{1} \leftarrow$ circle formed by taking $P^{'}[i], P_d$ as diametric ends. \\
+        $C_{2} \leftarrow$ circumcircle of $P^{'}[i], P_d, P_{min}$. \\
+        $C \leftarrow$ circle among $C_1, C_2$ having least radius. \\
     }
+ }
+ \Return{$C$}
+\end{algorithm}
 \end{frame}
 
 \begin{frame}{Lemma 1}
@@ -245,16 +234,16 @@ So the third defining point(if any) is the point which form the least acute angl
  \hline\hline
  $N$ & Expected $O(n)$ algorithm & $O(n^3)$ Algorithm & $O(n^4)$ Algorithm \\ [0.5ex] 
  \hline\hline
-10 & 0.069 & 0.186 & 0.248 \\ \hline
-20 & 0.093 & 1.112 & 3.203 \\ \hline
-30 & 0.097 & 3.395 & 14.635 \\ \hline
-40 & 0.133 & 7.888 & 44.322 \\ \hline
-50 & 0.146 & 15.107 & 105.807 \\ \hline
-60 & 0.185 & 26.222 & 219.731 \\ \hline
-70 & 0.215 & 42.041 & 408.725 \\ \hline
-80 & 0.229 & 62.511 & 695.651\\ \hline
-90 & 0.239 & 88.957 & 1109.614 \\ \hline
-100 & 0.268 & 122.576 & 1700.718\\ \hline
+10 & 0.063 & 0.186 & 0.248 \\ \hline
+20 & 0.088 & 1.112 & 3.203 \\ \hline
+30 & 0.101 & 3.395 & 14.635 \\ \hline
+40 & 0.132 & 7.888 & 44.322 \\ \hline
+50 & 0.153 & 15.107 & 105.807 \\ \hline
+60 & 0.190 & 26.222 & 219.731 \\ \hline
+70 & 0.206 & 42.041 & 408.725 \\ \hline
+80 & 0.223 & 62.511 & 695.651\\ \hline
+90 & 0.229 & 88.957 & 1109.614 \\ \hline
+100 & 0.261 & 122.576 & 1700.718\\ \hline
 \end{tabular}
 \caption{All the values given above are in ms. Tested over $50$ randomly generated examples for each $N$.}
 \label{Talbe}
@@ -270,31 +259,31 @@ So the third defining point(if any) is the point which form the least acute angl
  \hline\hline
  $N$ & Expected $O(n)$ algorithm & $O(n^3)$ Algorithm \\ [0.5ex] 
  \hline\hline
-100 & 0.269 & 121.167 \\ \hline
-200 & 0.476  & 959.231\\ \hline
+100 & 0.261 & 121.167 \\ \hline
+200 & 0.437  & 959.231\\ \hline
 
-300 & 0.679 & 3163.430
+300 & 0.631 & 3163.430
  \\ \hline
 
-400 & 1.052 & 7615.576
+400 & 0.945 & 7615.576
  \\ \hline
 
-500 & 1.175 & 14999.119
+500 & 1.040 & 14999.119
  \\ \hline
 
-600 & 1.522 & 25769.805
+600 & 1.318 & 25769.805
  \\ \hline
 
-700 & 1.813 & 43088.605
+700 & 1.703 & 43088.605
 \\ \hline
 
-800 & 2.008 & 66676.151
+800 & 1.712 & 66676.151
 \\ \hline
 
-900 & 2.219 & 93234.026
+900 & 1.876 & 93234.026
  \\ \hline
 
-1000 & 2.254 & 120870.487
+1000 & 2.188 & 120870.487
 \\ \hline
 \end{tabular}
 \caption{All the values given above are in ms. Tested over $20$ randomly generated examples for each $N$.}
@@ -309,19 +298,17 @@ So the third defining point(if any) is the point which form the least acute angl
  \hline\hline
  $N$ & Average Time & Worst Case Time & Standard deviation \\ [0.5ex] 
  \hline\hline
-10 & 0.071 & 0.097  & 0.011
+10 & 0.067  &  0.098  &  0.0114
  \\ \hline
-100 & 0.303 & 0.895 & 0.149
+100 & 0.277  &  0.737  &  0.127
  \\ \hline
-1000 & 2.224 & 5.419 & 0.933
+1000 & 2.181  &  4.328  &  0.729
  \\ \hline
-10000 & 22.307 & 47.068 & 8.381
+10000 & 19.894  &  48.375  &  8.953
  \\ \hline
-100000 & 212.129 & 629.476 & 96.677
+100000 & 215.114  &  739.233  &  109.248
  \\ \hline
-1000000 & 1786.539 & 3346.28 & find out!!
- \\ \hline
- 10000000 & find out!! & find out!! & find out!!
+1000000 & 2259.028  &  4374.806  &  1121.353
  \\ \hline
 \end{tabular}
 \caption{All the values given above are in ms. Tested over $50$ randomly generated examples for each $N$.}\end{table}
@@ -335,19 +322,17 @@ So the third defining point(if any) is the point which form the least acute angl
  \hline\hline
  $N$ & no. of times oint lies outside (Avg value) \\ [0.5ex] 
  \hline\hline
-10 & 3.235
+10 & 3.667
  \\ \hline
-100 & 8.843
+100 & 8.529
  \\ \hline
-1000 & 15.118
+1000 & 14.843
  \\ \hline
-10000 & 21.059
+10000 & 21.235
  \\ \hline
-100000 & 26.189
+100000 & 28.273
  \\ \hline
-1000000 & find out!!
- \\ \hline
-1000000 & find out!!
+1000000 & 33.727
  \\ \hline
 \end{tabular}
 \caption{Tested over $50$ randomly generated examples for each $N$.}\end{table}
@@ -359,17 +344,17 @@ So the third defining point(if any) is the point which form the least acute angl
 \begin{table}
 \centering
 \resizebox{\textwidth}{!}{
-\begin{tabular}{|c| c| c | c | c | c | c |} 
+\begin{tabular}{|c| c| c | c | c | c | } 
  \hline\hline
- Average time exceeded by(\%) & 10 & 100 & 1000 & 10000 & 100000 & 1000000 \\ [0.5ex] 
+ Average time exceeded by(\%) & 10 & 100 & 1000 & 10000 & 100000 \\ [0.5ex] 
  \hline\hline
-10 & 20.332 & 30.290 & 35.269 & 33.195 & find out!!& find out!! 
+10 & 23.529 & 31.373  & 37.255 & 29.412 & 33.333
  \\ \hline
-20 & 12.863 & 22.821 & 26.556 & 25.726 & find out!!& find out!!
+20 & 9.804& 25.49& 29.412 & 25.49 & 29.412 
  \\ \hline
-50 & 1.659 & 2.905 & 9.128 & 11.618 &  find out!!&find out!!
+50 & 0.0 & 9.804  &15.686 & 15.686 &  19.608
  \\ \hline
-100 & 0 &  1.1 & 2.489 & 4.979 & find out!!&find out!!
+100 & 0 &  1.961 & 3.922&1.961 & 3.922
  \\ \hline
 \end{tabular}
 }
