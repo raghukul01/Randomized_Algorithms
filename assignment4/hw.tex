@@ -127,19 +127,21 @@ Some notations used in analysis are $G_i: $ denotes the conflict graph after $i^
 
 \subsubsection*{Conflict Graph Details}
 Our conflict graph to solve this problem is based on interval division. Formally at $i^{th}$ stage, conflict graph $C_i$ will store 2-way mapping between set of points and set of intervals (division of $X$ axis). \\ \\ 
-If $I_1 = 0\rightarrow x_1, I_2 = x_1 \rightarrow x_2, I_k \ldots x_{k-1} \rightarrow x_{k}$ denote the intervals at $i^{th}$ stage ($x_k$ being the point in $P$ having largest $x$ coordinate), then our conflict graph will store which interval, point $p$ belongs to $\forall p \in P$. Also we store a list of all the points belonging to a particular interval. Lastly we'll also store the points which define this interval, ie $x_{i-1}, x_i\in P$ for $I_i, \forall i \in [1,k]$, and the interval height (defined by $H_{i}$ for $I_i$ interval, $H_i = \max y_j \text{ for } j \in [1,i]$). For a particular interval, we store the interval which is just left to it, in other words we can get the left neighbor of a interval in $O(1)$. 
+If $I_1 = x_0 = x_{min}\rightarrow x_1, I_2 = x_1 \rightarrow x_2, I_k \ldots x_{k-1} \rightarrow x_{k} = x_{max}$ denote the intervals at $i^{th}$ stage ($x_k$ being the point in $P$ having largest $x$ coordinate), then our conflict graph will store which interval, point $p$ belongs to $\forall p \in P$. Also we store a list of all the points belonging to a particular interval. Lastly we'll also store the points which define this interval, ie $x_{i-1}, x_i\in P$ for $I_i, \forall i \in [1,k]$, and the interval height (defined by $H_{i}$ for $I_i$ interval, $H_i =$ maximum value of $y$ coordinate among all points belonging to this interval). For a particular interval, we store the interval which is just left to it, in other words we can get the left neighbor of a interval in $O(1)$. 
 
 Note that these interval heights may change when we proceed incrementally.\\ \\
 
 Some operations and their complexity analysis are:
 \begin{itemize}
 	\item \textbf{Locating interval of $p_i \in P: $} Well store explicit mapping of interval for each point, so this opearation will take $O(1)$ time.
-	\item \textbf{Determining whether $G_{i+1}$ will be different from $G_i: $} Note that $G_{i+1}$ will change only when we change the intervals in our graph. Interval will change if y-coordinate of $p_{i+1}$  is greater than $H_{t}$, where $H_{t}$ is the height of interval at $i^{th}$ stage to which $p_{i+1}$ belong. We can get the interval to which $p_{i+1}$ belongs in $O(1)$, also its height in $O(1)$, we determining whether $G_{i+1}$ will be different will take $O(1)$ time.
-	\item \textbf{Updating $G_{i+1}$: } We will update $G_{i+1}$ only if $p_{i+1}$ has height greater than interval height to which $p_{i+1}$ belong to (let this interval be $I_t$). In that case we'll remove all the intervals to the left of $I_t$ having height less than $y_{p_{i+1}}$ (including $I_t$), and introduce 2 new interval $I^1_t, I^2_t$. Lets assume that $I_1, I_2, \ldots I_m$ are the interval to the left of $I_t$ that are removed, then $I^1_t  = (x_{0} \rightarrow x_{p_{i+1}}), I^2_t = (x_{p_{i+1}} \rightarrow x_t)$ (where $x_0$ is the left end of $I_1$ interval). Height of $I^1_t$ is equal to y-coordinate of $p_{i+1}$ and height of $I^2_t$ is equal to height of $I_t$. We also need to update the mapping of all points belonging to the interval which are affected. Since we store the left neighbor of each interval, this operation can be done efficiently, however it may take $O(n)$ in worst case. 
 
-  %In that well remove $I_t = (x_{t-1} \rightarrow x_t)$ and add 2 new intervals: $I^1_t, I^2_t$, such that $I^1_t  = (x_{t-1} \rightarrow x_{p_i}), I^2_t = (x_{p_i} \rightarrow x_t)$ and height of $I^1_t$ is equal to y-coordinate of $p_{i+1}$ and height of $I^2_t$ is equal to height of $I_t$. Note that we have to change the mapping for all the points which belonged to $I_k$, by convention $p_{i+1}\in I^1_t$. Also we need to update neighbors of $I^1_t, I^2_t$ using neighbor data of $I_t$. So in worst case there can be $n$ points whose mapping needs to be changed, ie worst case time = $O(n)$. 
+	\item \textbf{Determining whether $G_{i+1}$ will be different from $G_i: $} Note that $G_{i+1}$ will change only when we change the intervals in our graph. Interval will change if y-coordinate of $p_{i+1}$  is greater than $H_{t}$, where $H_{t}$ is the height of interval at $i^{th}$ stage to which $p_{i+1}$ belong. We can get the interval to which $p_{i+1}$ belongs in $O(1)$, also its height in $O(1)$, we determining whether $G_{i+1}$ will be different will take $O(1)$ time.
+
+	\item \textbf{Updating $G_{i+1}$: } We will update $G_{i+1}$ only if $p_{i+1}$ has height greater than interval height to which $p_{i+1}$ belong to (let this interval be $I_t$). In that case we'll remove all the intervals to the left of $I_t$ having height less than $y_{p_{i+1}}$ (including $I_t$), and introduce 2 new interval $I^1_t, I^2_t$. Lets assume that $I^{'}_1, I^{'}_2, \ldots I^{'}_m$ are the interval to the left of $I_t$ that are removed, then $I^1_t  = (x_{0} \rightarrow x_{p_{i+1}}), I^2_t = (x_{p_{i+1}} \rightarrow x_t)$ (where $x_0$ is the left end of $I^{'}_1$ interval). Height of $I^1_t$ is equal to y-coordinate of $p_{i+1}$ and height of $I^2_t$ is equal to height of $I_t$. We also need to update the mapping of all points belonging to the interval which are affected. Since we store the left neighbor of each interval, this operation can be done efficiently, however it may take $O(n)$ in worst case. 
+
 \end{itemize}
-One last thing before we proceed further is that we'll also store the point $p$ which is on the top right corner of a interval. We have seen above that this point $p$ caused creation of this interval.
+One last thing before we proceed further is that we'll also store the point $p$ which is on the top right corner of a interval. We have seen above that this point $p$ caused creation of this interval. \\
+Note that after update we do not keep $i^{th}$ point in the set. So after $i^{th}$ round, in the set we have only $n-i$ points.
 
 \pagebreak
 
@@ -164,7 +166,7 @@ So using these details of implementation as background our algorithm to find non
   	$M[p_i] \leftarrow I_1$\\
     $S[I_1] \leftarrow S[I_1] \cup {p_i}$ \\
   }
-  $I_1 \leftarrow (0\rightarrow x_{mx})$ \\
+  $I_1 \leftarrow (x_{min}\rightarrow x_{max})$ \\
   $H[I_1] \leftarrow 0$\\
   $D[I_k] \leftarrow p_{x_{mx}}$ // defined by point having maximum value of $X$ coordinate.
  \For{$i \leftarrow 1$ \KwTo $n$} {
@@ -187,21 +189,8 @@ So using these details of implementation as background our algorithm to find non
         }
       }
       $D[I^2_k] \leftarrow D[I_k]$ \\
-      $D[I^1_k] \leftarrow p_{i+1}$
- 			% $I^1_k = x_{k-1} \rightarrow x_{p_i}$ \\
- 			% $I^2_k = x_{p_i} \rightarrow x_k$ (since $I_k = x_{k-1} \rightarrow x_k$) \\
-  		% 	 \For{$j \leftarrow 1$ \KwTo $n$} {
-  		% 	 	\uIf{$M[p_j] = I_k$}{
-  		% 	 		\uIf{$x_{p_j} \geq x_{k-1} \& x_{p_j} \leq x_{p_i} $} {
-  		% 	 			$M[p_j] = I^1_k$ \\
-  		% 	 		}
-  		% 	 		\uElse {
-  		% 	 			$M[p_j] = I^2_k$ \\
-  		% 	 		}
-  		% 	 	}
- 			%  }
- 			%  $H[I^1_k] = y_{p_i}$ \\
- 			%  $H[I^2_k] = H[I_k]$ \\
+      $D[I^1_k] \leftarrow p_{i+1}$ \\
+      Update S value for these 2 interval, but be aware, not to include $i^{th}$ point, because that will give a logarithmic factor compared to linear. \\
  		}
  }
  $T \leftarrow \phi$ \\
@@ -226,7 +215,21 @@ Let $X_i$ be the random variable denoting the number of points for which the map
 Backward analysis of this problem is exactly same as that of convex hull. \\
 $a: $ a subset of $i$ point of $P$ \\
 $\epsilon_a: $ first $i$ points of $P$ are some permutation of $a$. \\
-
-
+\begin{align*}
+E[X_i | \epsilon_a] &= n_1 + n_2 \ldots (\dfrac{1}{i}) \\
+                    & n_2 + n_3 \ldots (\dfrac{1}{i}) \\
+                    & \ldots \\
+                    & n_k \ldots (\dfrac{1}{i})\\
+\end{align*}
+Note that in the last one we have only $n_k$, because for the rightmost interval, we only have created one in the step. \\
+Using the above analysis we get $E[X_i | \epsilon_a] \leq \dfrac{2(n-i)}{i}$
+Let $S_i$ be the set of all subsets of $P$ of size $i$. \\
+$E[X_i] = \sum_{a\in S_i} E[X_i | \epsilon_a]. P(\epsilon_a) \leq \sum_{a\in S_i} \dfrac{2(n-i)}{i}. P(\epsilon_a) = \dfrac{2(n-i)}{i}$ \\ \\
+Expected runtime of $i^{th}$ iteration = $E[X_i] + O(1)$ ($O(1)$ is due to creation and deletion of intervals).
+\begin{align*}
+  &= E[X_i] + O(1) \\
+  &= O(\dfrac{n-i}{i})
+\end{align*}
+Expected running time of the algorithm $\mathbf{= O(n \log n)}$.
 \end{document}
 
