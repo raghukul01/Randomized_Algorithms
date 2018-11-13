@@ -99,9 +99,77 @@ Thus, there exist a set of $n$ segments and a permutation for which the above al
 
 % start of Q3
 \begin{question}[]
-\textbf{Internalizing Backward Analysis and Randomized Incremental
-Construction (RIC)}
+\textbf{Internalizing Backward Analysis and Randomized Incremental Construction (RIC)}
 \end{question}
+A point $x_i, y_i$ is said to dominate another point $x_j, y_j$ if $x_i > x_j$ and $y_i > y_j$. \\
+\textbf{Non dominant point: } A point is said to be non dominant if there is no point in $P$ which dominates it. \\
+So we need to find an expected $O(n\log n)$ algorithm to compute all non-dominanted point in $P$. We'll solve this using \textit{Randomized Incremental Construction}, using conflict graphs. \\ \\
+
+Some notations used in analysis are $G_i: $ denotes the conflict graph after $i^{th}$ step, $p_i: $ $i^{th}$ point in our incremental construction, $I_i: $ $i^{th}$ interval on $X$ axis.
+
+\subsubsection*{Conflict Graph Details}
+Our conflict graph to solve this problem is based on interval division. Formally at $i^{th}$ stage, conflict graph $C_i$ will store 2-way mapping between set of points and set of intervals (division of $X$ axis). \\ \\ 
+If $I_1 = 0\rightarrow x_1, I_2 = x_1 \rightarrow x_2, I_k \ldots x_{k-1} \rightarrow x_{k}$ denote the intervals at $i^{th}$ stage ($x_k$ being the point in $P$ having largest $x$ coordinate), then our conflict graph will store which interval, point $p$ belongs to $\forall p \in P$. Also we store a list of all the points belonging to a particular interval. Lastly we'll also store the points which define this interval, ie $x_{i-1}, x_i\in P$ for $I_i, \forall i \in [1,k]$, and the interval height (defined by $H_{i}$ for $I_i$ interval, $H_i = \max y_j \text{ for } j \in [1,i]$). Note that these interval heights may change when we proceed incrementally.\\ \\
+Some operations and their complexity analysis are:
+\begin{itemize}
+	\item \textbf{Locating interval of $p_i \in P: $} Well store explicit mapping of interval for each point, so this opearation will take $O(1)$ time.
+	\item \textbf{Determining whether $G_{i+1}$ will be different from $G_i: $} Note that $G_{i+1}$ will change only when we change the intervals in our graph. Interval will change if y-coordinate of $p_{i+1}$  is greater than $H_{t}$, where $H_{t}$ is the height of interval at $i^{th}$ stage to which $p_{i+1}$ belong. We can get the interval to which $p_{i+1}$ belongs in $O(1)$, also its height in $O(1)$, we determining whether $G_{i+1}$ will be different will take $O(1)$ time.
+	\item \textbf{Updating $G_{i+1}$: } We will update $G_{i+1}$ only if $p_{i+1}$ has height greater than interval height to which $p_{i+1}$ belong to (let this interval be $I_t$). In that well remove $I_t = (x_{t-1} \rightarrow x_t)$ and add 2 new intervals: $I^1_t, I^2_t$, such that $I^1_t  = (x_{t-1} \rightarrow x_{p_i}), I^2_t = (x_{p_i} \rightarrow x_t)$ and height of $I^1_t$ is equal to y-coordinate of $p_{i+1}$ and height of $I^2_t$ is equal to height of $I_t$. Note that we have to change the mapping for all the points which belonged to $I_k$, by convention $p_{i+1}\in I^1_t$. Also we need to update neighbors of $I^1_t, I^2_t$ using neighbor data of $I_t$. So in worst case there can be $n$ points whose mapping needs to be changed, ie worst case time = $O(n)$. 
+\end{itemize}
+One last thing before we proceed further is that we'll also store the point $p$ which is on the top right corner of a interval. We have seen above that this point $p$ caused creation of this interval.
+
+\pagebreak
+
+So using these details of implementation as background our algorithm to find non dominant points is:
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{$P = p_1, p_2,\ldots p_n:$ set of n points in $2-D$ plane}
+\KwOut{Set of non dominant points in $P$}
+  $G_1 = \{ I = \{ I_1 \}, M \}$ (initial conflict graph, here $I_1 = (0\rightarrow x_{mx})$, where $x_{mx}$ is maximum $X$ coordinate of all points in $P$) \\
+  /* \\
+  In subsequent step $M$ will denote the map from set of points to set of intervals \\
+  $I$ will denote the set of intervals \\
+  $I_k$ will denote $k^{th}$ interval, this will store data for height and interval limit(on $X$ axis).\\
+  $H[I_k]$ will denote height of $k^{th}$ interval.\\
+  $I_k$ is defined by $x_{k-1} \rightarrow x_k$\\
+  $D[I_k]$ will denote the generating point for interval $I_k$ \\
+  */ \\
+  \For{$i \leftarrow 1$ \KwTo $n$} {
+  	$M[p_i] = I_1$\\
+  }
+  $I_1 = (0\rightarrow x_{mx})$
+  $H[I_1] = 0$\\
+  $D[I_k] = p_{x_{mx}}$ // defined by point having maximum value of $X$ coordinate.
+ \For{$i \leftarrow 1$ \KwTo $n$} {
+ 	$I_k$ = $M[p_i]$ \\
+ 	\uIf{$y_{p_i} > H[I_k]$}{
+ 			// have to update $G$ \\
+ 			$I^1_k = x_{k-1} \rightarrow x_{p_i}$ \\
+ 			$I^2_k = x_{p_i} \rightarrow x_k$ (since $I_k = x_{k-1} \rightarrow x_k$) \\
+  			 \For{$j \leftarrow 1$ \KwTo $n$} {
+  			 	\uIf{$M[p_j] = I_k$}{
+  			 		\uIf{$x_{p_j} \geq x_{k-1} \& x_{p_j} \leq x_{p_i} $} {
+  			 			$M[p_j] = I^1_k$ \\
+  			 		}
+  			 		\uElse {
+  			 			$M[p_j] = I^2_k$ \\
+  			 		}
+  			 	}
+ 			 }
+ 			 $H[I^1_k] = y_{p_i}$ \\
+ 			 $H[I^2_k] = H[I_k]$ \\
+ 		}
+ }
+ $S = \phi$ \\
+ \For{$Q \in I$} {
+ 	$S = S \cup \{ D[Q] \}$ // include defining point of this interval
+ }
+
+ \Return{$S$}
+ \caption{RIC based algorithm for finding Non dominant points.}
+\end{algorithm}
+
 
 \end{document}
 
