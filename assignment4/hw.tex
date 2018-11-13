@@ -87,32 +87,33 @@ Hence, the time complexity of the complete algorithm to get an inverse polynomia
 \textbf{A surprising problem from computational geometry}
 \end{question}
 \subsubsection*{1.}
-We will construct the line segments in order they are to be selected in the permutation. Let's say the first line segment is a horizontal line segment of length 1 having its' left end at origin. Construct the second line segment such that it intersects the extended first line segment on the right side, and makes a small positive angle with the horizontal. 
-Construct the third line segment such that it will intersect both the previous extended line segments, this line segment makes an angle with the horizontal which is just greater than the previous line segment.
-Now consider that we have constructed $i-1$ line segments in this manner, construct the $i^{th}$ line segment intersecting all previous extended line segments and making an angle just greater than the ${(i-1)}^{th}$ line segment with the horizontal. We can always construct such a line segment by chosing a suitable length and suitable angle with the horizontal for the $i^{th}$ line segment. Do this till we get $n$ line segments.\\
+We will construct the line segments in order they are to be selected in the permutation. Let's say the first line segment is a horizontal line segment having its' left end at origin. Construct the second line segment such that it intersects the extended first line segment on the right side, and makes a small positive angle with the horizontal. \\
+Construct the third line segment such that it will intersect both the previous extended line segments, this line segment makes an angle with the horizontal which is just greater than the angle made by the previous line segment with the horizontal.\\
+Now consider that we have constructed $i-1$ line segments in this manner, construct the $i^{th}$ line segment intersecting all previous extended line segments and making an angle just greater than the angle made by the ${(i-1)}^{th}$ line segment with the horizontal. \\
+We can always construct such a line segment by chosing a suitable length and suitable angle with the horizontal for the $i^{th}$ line segment. Do this till we get $n$ line segments.\\
 \textbf{Note - }We are considering angle with the horizontal in the anticlockwise sense.\\
 This procedure will result in $n\choose2$ points of intersection as every pair of line segments will have a distinct point of intersection if constructed this way.\\
 Thus, there exist a set of $n$ segments and a permutation for which the above algorithm will cause $n\choose2$ points of intersections.
 \subsubsection*{2.}
-Take any line segment, call it $L$. We will look at all points of intersection which we get after extending this segment towards right, the other case is symmetrical.\\
-Label the line segments which intersect the right extended part of $L$ to be $1,2,...,i,...$ in order from left to right.\\
-\begin{warn}[Fact 1: If line segment $L$ has a point of intersection with line labelled $i$ then $L$ should have been extended before all the line segments labelled $1$ to $i-1$.]\end{warn}
-Using Fact 1 and the fact that initially line segments are permuted randomly uniformly(so the probability that any segment is picked first among a subset of size $k$ is $\frac{1}{k}$), the probability that $L$ has a point of intersection with line labelled $i$ is at most $\frac{1}{i}$.\\
+Take any line segment, call it $L$. We will look at all points of intersection which we get after extending this segment towards right, analysis for left side is similar.\\
+Label the line segments which intersect the right extended part of $L$ to be $1,2,...,i,...$ in order from left to right. We are considering the intersections after the procedure is completed.\\
+\begin{warn}[Observation 1: If line segment $L$ has a point of intersection with line labelled $i$ then $L$ should have been extended before all the line segments labelled $1$ to $i-1$.]\end{warn}
+Using Observation 1 and the fact that initially line segments are permuted randomly uniformly(so the probability that any segment is picked first among a subset of size $k$ is $\frac{1}{k}$), the probability that $L$ has a point of intersection with line labelled $i$ is at most $\frac{1}{i}$.\\
 Consider random variable $X_i$ taking value $1$ if line segment $i$ intersects with $L$ otherwise $0$.\\
-So, $$E[X_i] = P(X_i = 1)*1 + P(X_i = 0)*0 \implies E[X_i] =  \frac{1}{i}$$
+So, $$E[X_i] = P(X_i = 1)*1 + P(X_i = 0)*0 \implies E[X_i] \leq  \frac{1}{i}$$
 Let $X$ be the number of points of intersection caused by line segment $L$ when extended towards right.\\
 By Linearity of Expectation, 
-$$E[X] \leq \sum_{i=1}^n E[X_i]$$
+$$E[X] = \sum_{i=1}^n E[X_i]$$
 $$E[X] \leq \sum_{i=1}^n \frac{1}{i}$$
 $$E[X] = O(\log n)$$
 Similarly, we can get the same bound on the expected number of points of intersection caused by line segment $L$ when extended towards left.\\
 Thus expected number of points of intersection caused by the extension of line segment $L$ is $O(\log n)$.\\
-No two line segments intersected with each other initially, so all points of intersection will be due to extension of some line segment.\\
-Let the total number of points of intersection is $N$.\\
-By linearity of expectation,
-$$E[N] = n*O(\log n)$$
-$$E[N] = O(n\log n)$$
-Thus, for any arbitrary set of $n$ line segments, if we permute them randomly uniformly and then execute the above algorithm, the expected number of points of intersection will be $O(n \log n)$.
+\begin{warn}[Observation 2: No two line segments intersected with each other initially, so all points of intersection will be due to extension of line segments.]\end{warn}
+Let the total number of points of intersection is $Y$.\\
+By Observation 2 and linearity of expectation,
+$$E[Y] = n*O(\log n)$$
+$$E[Y] = O(n\log n)$$
+Thus, for any arbitrary set of $n$ line segments, if we permute them randomly uniformly and then execute the given procedure, the expected number of points of intersection will be $O(n \log n)$.
 \pagebreak
 
 % start of Q3
