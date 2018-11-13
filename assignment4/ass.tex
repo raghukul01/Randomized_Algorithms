@@ -1,0 +1,107 @@
+
+%=======================   Default Templete   ==================
+\documentclass[a4paper]{article}
+
+
+% file with some default definations
+\input{structure.tex}
+\usepackage{listings}
+\lstset{language=Python, basicstyle=\normalsize\sffamily\linespread{0.8}, numbers=left, numberstyle=\small, stepnumber=1, numbersep=5pt}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{\NAME\ (\ANDREWID)}}
+\chead{\textbf{Assignment \HWNUM}}
+\rhead{\COURSE}
+
+
+%==================Header details======================
+\newcommand\NAME{Raghukul, Vibhor}
+\newcommand\ANDREWID{160538, 160778}
+\newcommand\HWNUM{4}
+\newcommand\COURSE{CS648}
+%======================================================
+
+% available formatted sections:
+% - COMMAND LINE ENVIRONMENT: \begin{commandline} \end{commandline}
+% - FILE CONTENTS ENVIRONMENT: \begin{file}[optional filename, defaults to "File"]
+% - NUMBERED QUESTIONS ENVIRONMENT: \begin{question}[optional title]
+% - WARNING TEXT ENVIRONMENT(can also be used for note): \begin{warn}[optional title, defaults to "Warning:"]
+% - INFORMATION ENVIRONMENT(can be used to mention given details): \begin{info}[optional title, defaults to "Info:"]
+
+%===============================================================
+\begin{document}
+
+% start of Q1
+\begin{question}
+\textbf{Internalizing Min-cut Algorithm}
+\end{question}
+\subsection*{1.}
+
+\subsection*{2.}
+\textbf{Time Complexity :}\\
+Each contract step takes $O(n)$ and we are contracting $\frac{n}{2}$ times so this results in $O(n^2)$ work.\\
+Thus if the time complexity of the algorithm is $T(n)$ then,
+$$T(n) = O(n^2) + 2T(\frac{n}{2})$$
+$$T(n) = O(n^2) + O(\frac{n^2}{2}) + 2T(\frac{n}{4})$$
+$$T(n) = O(n^2) + O(\frac{n^2}{2}) + O(\frac{n^2}{8}) + \dots$$
+$$T(n) = O(n^2)$$
+\textbf{Error Analysis :}\\
+Let the probability that algorithm preserves the min-cut be $q(n)$.\\
+As shown in class, probability that min-cut is preserved after $\frac{n}{2}$ contractions is at least $\frac{1}{4}$.
+Thus, we can say that $q(n)$ is at least $\frac{1}{4}$ times the probability that at least one smaller recursive call of size $\frac{n}{2}$ preserves the min-cut.
+So,
+$$q(n) \geq \frac{1}{4}\left(1-\left(1-q\left(\frac{n}{2}\right)\right)^2\right)$$
+$$q(n) \geq \frac{1}{4}\left(2 - q\left(\frac{n}{2}\right)\right)q\left(\frac{n}{2}\right)$$
+$$q(n) \geq \frac{1}{2}q\left(\frac{n}{2}\right) - \frac{1}{4}q\left(\frac{n}{2}\right)^2$$
+Now let $p(k) = q(2^k)$. So we have,
+$$p(k) \geq \frac{1}{2}p\left(k-1\right) - \frac{1}{4}p\left(k-1\right)^2$$
+Call the above inequality to be $I_1$.\\
+Since $p(k) \leq 1\ \forall k$ we get $$p(k) \geq \frac{1}{2}p\left(k-1\right) - \frac{1}{4}p\left(k-1\right)$$
+or,
+$$p(k) \geq \frac{1}{4}p\left(k-1\right)$$
+By the above inequality and $I_1$ we have,
+$$p(k) \geq \frac{1}{2}p\left(k-1\right) - p(k)p\left(k-1\right)$$
+Thus,
+$$\frac{1}{p(k)} \leq \frac{2}{p(k-1)} + 2$$
+Base case - $p(1) = 1$
+$$\frac{1}{p(k)} \leq 2\left(\frac{2}{p(k-2)} + 2\right) + 2$$
+$$\frac{1}{p(k)} \leq \frac{2^2}{p(k-2)} + 2 + 2^2$$
+In general,
+$$\frac{1}{p(k)} \leq \frac{2^i}{p(k-i)} + 2 + 2^2 + \dots + 2^i$$
+So,
+$$\frac{1}{p(k)} \leq \frac{2^{k-1}}{p(1)} + 2 + 2^2 + \dots + 2^{k-1}$$
+$$\frac{1}{p(k)} \leq 2^{k-1} + 2(2^{k-1}-1)$$
+$$\frac{1}{p(k)} \leq 2^k + 2^{k-1} - 2$$
+Thus,
+$$\frac{1}{q(n)} \leq n + \frac{n}{2} - 2$$
+$$q(n) \geq \frac{2}{3n - 4}$$
+So the probability that the algorithm preserves min-cut is at least $\frac{2}{3n - 4}$\\
+To get error probability less than $\frac{1}{n^c}$ repeat our algorithm $cn\log(n)$ times.\\
+Hence, the time complexity of the complete algorithm to get an inverse polynomial error bound is $O(n^3 \log(n))$.
+\pagebreak
+% start of Q2
+\begin{question}[]
+\textbf{A surprising problem from computational geometry}
+\end{question}
+\subsubsection*{1.}
+We will construct the line segments in order they are to be selected in the permutation. Let's say the first line segment is a horizontal line segment of length 1 having its' left end at origin. Construct the second line segment such that it will intersect the extended first line segment on the right side, and makes a small positive angle with the horizontal. 
+Construct the third line segment which will intersect both the previous extended line segments, this line segment makes just greater angle with the horizontal than the previous line segment.
+Now consider that we have constructed $i-1$ line segments in this manner, now construct the $i^{th}$ line segment intersecting all previous line segments and making an angle just greater than the ${(i-1)}^{th}$ line segment with the horizontal. Do this till we get $n$ line segments.\\
+\textbf{Note - }I am considering angle with the horizontal in the anticlockwise sense.\\
+This procedure will result in $n\choose2$ points of intersection as every pair of line segments will have a distinct point of intersection if constructed this way.\\
+Thus, there exist a set of $n$ segments and a permutation for which the above algorithm will cause $n\choose2$ points of intersection.
+\subsubsection*{2.}
+
+\pagebreak
+
+% start of Q3
+\begin{question}[]
+\textbf{Internalizing Backward Analysis and Randomized Incremental
+Construction (RIC)}
+\end{question}
+
+\end{document}
+
