@@ -1,7 +1,7 @@
 
 %=======================   Default Templete   ==================
 \documentclass[a4paper]{article}
-
+\usepackage{graphicx}
 
 % file with some default definations
 \input{structure.tex}
@@ -43,10 +43,7 @@
 \SetAlgoLined
 \KwIn{graph $G$ and an edge $e = (x, y)$}
 \KwOut{graph $G^{'}$ formed by compressing the edge $e$ in $G$}
-  /* \textbf{Brief overview}\\
-    We store the graph in form of adjacency list. Compared to the standard adjacency list, we'll store linked list for each vertex, instead of list. In this linked list we'll store all the vertex which are connected to this vertex, along with weight (representing number of multi edges), and a pointer. Suppose the linked list of vertex $x$ contain a node of vertex $y$, then the pointer in this node will store the address of node in linked list of $y$ that contain $x$. This pointer helps us delete a particular node in $O(1)$ time. 
-    \\
-  */\\
+    $G \leftarrow \{L, n \}$ ($L$ is the linked list defining graph, $n = |V|$) \\
   $L[i] \leftarrow$ Linked list for vertex $i$ \\
   $M[i] \leftarrow$ A map used in merge step (initially set to $0$)\\
   $z \leftarrow x$ (the encoding of new node in compressed graph, we need to store this for extracting nodes finally) \\
@@ -55,7 +52,7 @@
   $L[z] \leftarrow$ $\phi$ \\
   $S \leftarrow$ $\phi$ \\
   $p \leftarrow L[x]$ \\
-  $A \leftarrow \phi$
+  $A \leftarrow \phi$\\
   \While{$p \neq NULL$} {
     $M[p.\text{vertex}] \leftarrow M[p.\text{vertex}] + p.\text{weight}$ \\
     $S \leftarrow S \cup \{ p.\text{vertex} \}$ \\
@@ -88,18 +85,18 @@
   \For {$s \in S$} {
     $M[s] \leftarrow 0$ \\ 
   }
+  $G^{'} \leftarrow \{L, n-1\}$ (the updated value of $L$) \\
  \Return{$G^{'}$}
  \caption{Algorithm for $contract(e, G)$ in $O(|V|)$}
 \end{algorithm}
-
+\newpage
+\textbf{Brief overview: }
+    We store the graph in form of adjacency list. Compared to the standard adjacency list, we'll store linked list for each vertex, instead of list. In this linked list we'll store all the vertex which are connected to this vertex, along with weight (representing number of multi-edges), and a pointer. Suppose the linked list of vertex $x$ contain a node of vertex $y$, then the pointer in this node will store the address of node in linked list of $y$ that contain $x$. This pointer helps us delete a particular node in $O(1)$ time.  
+    \\
+\textbf{Time Complexity Analysis:}\\
+Size of $S$ would be at most $n$ because it contains unique vertices.
+So each of the steps $1,2$ and $3$ are being done in $O(|V|)$.Thus the time complexity of the overall algorithm would also be $O(|V|).$
 \pagebreak
-
-
-
-
-
-
-
 
 
 
@@ -156,7 +153,11 @@ Now consider that we have constructed $i-1$ line segments in this manner, constr
 We can always construct such a line segment by chosing a suitable length and suitable angle with the horizontal for the $i^{th}$ line segment. Do this till we get $n$ line segments.\\
 \textbf{Note - }We are considering angle with the horizontal in the anticlockwise sense.\\
 This procedure will result in $n\choose2$ points of intersection as every pair of line segments will have a distinct point of intersection if constructed this way.\\
-Thus, there exist a set of $n$ segments and a permutation for which the above algorithm will cause $n\choose2$ points of intersections.
+Thus, there exist a set of $n$ segments and a permutation for which the above algorithm will cause $n\choose2$ points of intersections.\\
+Here is an example construction for $n=5$. The dots represent the extended part and the order in which the lines are picked is their label.\\
+\begin{center}
+\includegraphics[scale=0.127]{IMG.jpg}
+\end{center}
 \subsubsection*{2.}
 Take any line segment, call it $L$. We will look at all points of intersection which we get after extending this segment towards right, analysis for left side is similar.\\
 Label the line segments which intersect the right extended part of $L$ to be $1,2,...,i,...$ in order from left to right. We are considering the intersections after the procedure is completed.\\
