@@ -38,7 +38,70 @@
 \begin{question}
 \textbf{Internalizing Min-cut Algorithm}
 \end{question}
-\subsection*{1.}
+% \subsection*{1.}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{graph $G$ and an edge $e = (x, y)$}
+\KwOut{graph $G^{'}$ formed by compressing the edge $e$ in $G$}
+  /* \textbf{Brief overview}\\
+    We store the graph in form of adjacency list. Compared to the standard adjacency list, we'll store linked list for each vertex, instead of list. In this linked list we'll store all the vertex which are connected to this vertex, along with weight (representing number of multi edges), and a pointer. Suppose the linked list of vertex $x$ contain a node of vertex $y$, then the pointer in this node will store the address of node in linked list of $y$ that contain $x$. This pointer helps us delete a particular node in $O(1)$ time. 
+    \\
+  */\\
+  $L[i] \leftarrow$ Linked list for vertex $i$ \\
+  $M[i] \leftarrow$ A map used in merge step (initially set to $0$)\\
+  $z \leftarrow x$ (the encoding of new node in compressed graph, we need to store this for extracting nodes finally) \\
+  $V \leftarrow$ Vertex set of $G$ \\
+  \textbf{Step 1: Merge Linked list of $mathbf{x, y}$} \\
+  $L[z] \leftarrow$ $\phi$ \\
+  $S \leftarrow$ $\phi$ \\
+  $p \leftarrow L[x]$ \\
+  $A \leftarrow \phi$
+  \While{$p \neq NULL$} {
+    $M[p.\text{vertex}] \leftarrow M[p.\text{vertex}] + p.\text{weight}$ \\
+    $S \leftarrow S \cup \{ p.\text{vertex} \}$ \\
+    $A \leftarrow A \cup \{ p.\text{address} \}$ \\
+    $p \leftarrow p.\text{right}$ \\
+  }
+  $p \leftarrow L[y]$ \\
+  \While{$p \neq NULL$} {
+    \uIf{$M[p.\text{vertex}] = 0$} {
+      $S \leftarrow S \cup \{ p.\text{vertex} \}$ \\
+    }
+    $A \leftarrow A \cup \{ p.\text{address} \}$ \\
+    $P[p.\text{vertex}] \leftarrow P[p.\text{vertex}] + p.\text{weight}$ \\
+    $p \leftarrow p.\text{right}$ \\
+  }
+  At this stage $M$ stores the weight of edges for $z$ and $S$ contain unique nodes \\
+  \textbf{Step 2: Modify The linked list of all affected nodes} \\
+  \For{$a \in A$} {
+    delete the node stored at address $a$. (this denotes either a node from a vertex to $x$ or $y$) \\
+  }
+  \For{$s \in S$} {
+    $n_1 = \text{Create\_Node}(s, M[s], \text{NULL})$ \\
+    $n_2 = \text{Create\_Node}(z, M[s], \text{NULL})$ \\
+    $n_1.\text{address} = \text{address($n_2$)}$ \\
+    $n_2.\text{address} = \text{address($n_1$)}$ \\
+    $L[z] \leftarrow L[z] \cup \{ n_1 \}$ \\
+    $L[s] \leftarrow L[s] \cup \{ n_2 \}$ \\
+  }
+  \textbf{Step 3: Reset the map $\mathbf{M}$ for further use} \\
+  \For {$s \in S$} {
+    $M[s] \leftarrow 0$ \\ 
+  }
+ \Return{$G^{'}$}
+ \caption{Algorithm for $contract(e, G)$ in $O(|V|)$}
+\end{algorithm}
+
+\pagebreak
+
+
+
+
+
+
+
+
+
 
 \subsection*{2.}
 \textbf{Time Complexity :}\\
